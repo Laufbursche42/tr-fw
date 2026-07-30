@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v25";
+var BUILD = "v26";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -255,11 +255,6 @@ buildBtn.addEventListener("click", function () {
 });
 document.getElementById("dlgNo").addEventListener("click", function () { dlg.close(); });
 dlgConsent.addEventListener("change", syncBuildConsent);
-// Opens on top of the confirmation, which stays open behind it: reading the terms is not an answer.
-document.getElementById("dlgDisclaimer").addEventListener("click", function (e) {
-  e.preventDefault();
-  openDisclaimer();
-});
 document.getElementById("dlgYes").addEventListener("click", function () {
   if (!dlgConsent.checked) return;
   dlg.close();
@@ -403,7 +398,7 @@ document.getElementById("docClose").addEventListener("click", function () { docD
 // button at all, so reading the terms can never start a build.
 function openDisclaimer() {
   var body = document.getElementById("docBody");
-  document.getElementById("docTitle").textContent = t("dlgTitle");
+  document.getElementById("docTitle").textContent = t("disclaimer");
   var html = "<p>" + t("dlgLede") + "</p><ul>";
   if (selectedVariant() === "kickstart") html += '<li class="unverified">' + t("dlgUnverified") + "</li>";
   var pts = (window.I18N[lang] || {}).dlgPoints || [];

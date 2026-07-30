@@ -133,6 +133,7 @@ dialog {
 }
 dialog::backdrop { background: rgba(0,0,0,.72); }
 .dlg-body { padding: 1.25rem 1.25rem 0; }
+.dlg-body:focus { outline: none; }   /* focused only to open the dialog at the top */
 .dlg-body h2 { margin: 0 0 .7rem; font-size: 1.05rem; color: var(--warn); }
 .dlg-body ul { margin: 0 0 .9rem; padding-left: 1.15rem; color: var(--label); font-size: .9rem; }
 .dlg-body .dlg-lede { margin: 0 0 .8rem; color: var(--label); font-size: .9rem; }
@@ -141,19 +142,57 @@ dialog::backdrop { background: rgba(0,0,0,.72); }
 .dlg-body li.unverified b { color: var(--warn); }
 dialog { max-height: 88vh; overflow-y: auto; }
 .dlg-body li { margin-bottom: .45rem; }
-.dlg-foot { display: flex; gap: .6rem; justify-content: flex-end; padding: 0 1.25rem 1.25rem; }
+.dlg-foot { display: flex; gap: .6rem; justify-content: center; padding: 0 1.25rem 1.25rem; }
 .dlg-foot button { font: 600 .92rem/1 inherit; padding: .7rem 1.1rem; border-radius: .4rem; cursor: pointer; }
 .btn-cancel { background: transparent; color: var(--label); border: 1px solid var(--border); }
 .btn-go { background: var(--accent-2); color: #0A0C10; border: 0; }
 .dlg-foot button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* Document viewer: the texts belong to this page, so they open here instead of
+   sending the reader to a code host. Head and foot stay put, the text scrolls. */
+#doc { max-width: 44rem; max-height: 88vh; overflow: hidden; }
+/* Only the open dialog is a flex column: a display value on the closed one would
+   beat the browser's display:none and drop the whole thing into the page. */
+#doc[open] { display: flex; flex-direction: column; }
+.doc-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+.doc-head h2 { margin: 0; font-size: 1rem; }
+#docX { background: none; border: 0; color: var(--label); font: 1.5rem/1 inherit;
+  padding: 0 .2rem; cursor: pointer; }
+#docX:hover { color: var(--accent); }
+#docX:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.doc-body { padding: 1.1rem 1.25rem; overflow-y: auto; color: var(--label); font-size: .9rem; }
+.doc-body > :first-child { margin-top: 0; }
+.doc-body h1 { font-size: 1.05rem; color: var(--text); margin: 0 0 .9rem; }
+.doc-body h2 { font-size: .95rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+.doc-body h3, .doc-body h4 { font-size: .9rem; color: var(--text); margin: 1.2rem 0 .4rem; }
+.doc-body p { margin: 0 0 .8rem; }
+.doc-body ul, .doc-body ol { margin: 0 0 .9rem; padding-left: 1.2rem; }
+.doc-body li { margin-bottom: .35rem; }
+.doc-body b { color: var(--text); }
+.doc-body li.unverified, .doc-body li.unverified b { color: var(--warn); }
+.doc-body a { color: var(--accent); }
+.doc-body code { font: .85em var(--mono); background: #0d1018; border: 1px solid var(--border);
+  border-radius: .25rem; padding: .05rem .3rem; }
+.doc-body pre { background: #0d1018; border: 1px solid var(--border); border-radius: .4rem;
+  padding: .75rem .9rem; margin: 0 0 .9rem; overflow-x: auto; }
+.doc-body pre code { border: 0; background: none; padding: 0; font-size: .78rem; line-height: 1.55; }
+.doc-body hr { border: 0; border-top: 1px solid var(--border); margin: 1.3rem 0; }
+.doc-body blockquote { margin: 0 0 .9rem; padding-left: .8rem; color: #8a93a8;
+  border-left: 2px solid var(--border); }
+.doc-foot { display: flex; justify-content: center; padding: .9rem 1.25rem;
+  border-top: 1px solid var(--border); }
+.doc-foot button { font: 600 .92rem/1 inherit; padding: .7rem 1.4rem; border-radius: .4rem; cursor: pointer; }
+.doc-foot button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 footer { margin-top: 2.5rem; padding-top: 1.1rem; border-top: 1px solid var(--border);
   color: var(--label); font-size: .84rem;
-  display: flex; flex-wrap: wrap; gap: .5rem 1rem;
-  align-items: baseline; justify-content: space-between; }
+  display: flex; gap: .5rem 1rem; align-items: baseline; }
 footer a { color: var(--accent); }
 .foot-links { display: flex; flex-wrap: wrap; gap: .4rem 1rem; }
-.build-id { font: .72rem/1 var(--mono); color: #5c6478; letter-spacing: .06em; }
+/* The build keeps the first line and the far right, the links wrap under themselves. */
+.build-id { font: .84rem/1.4 var(--mono); color: #5c6478; letter-spacing: .06em;
+  margin-left: auto; white-space: nowrap; }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -223,16 +262,21 @@ footer a { color: var(--accent); }
 
   <footer>
     <span class="foot-links">
-      <a id="changelogLink" href="https://github.com/Laufbursche42/tr-fw/blob/main/docs/CHANGELOG.de.md" target="_blank" rel="noopener" data-t="changelog"></a>
-      <a id="privacyLink" href="https://github.com/Laufbursche42/tr-fw/blob/main/docs/PRIVACY.de.md" target="_blank" rel="noopener" data-t="privacy"></a>
-      <a href="https://github.com/Laufbursche42/tr-fw/blob/main/LICENSE.md" target="_blank" rel="noopener" data-t="license"></a>
+      <a href="https://github.com/Laufbursche42/tr-fw" target="_blank" rel="noopener" data-t="source"></a>
+      <a id="changelogLink" href="CHANGELOG.de.md" data-doc="CHANGELOG" data-t="changelog"></a>
+      <a href="#" id="disclaimerLink" data-t="disclaimer"></a>
+      <a id="privacyLink" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="privacy"></a>
+      <a id="licenseLink" href="LICENSE.de.md" data-doc="LICENSE" data-t="license"></a>
+      <a id="trademarksLink" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="trademarks"></a>
     </span>
-    <span class="build-id">page build <span id="pageBuild"></span></span>
+    <span class="build-id"><span data-t="buildLabel"></span> <span id="pageBuild"></span></span>
   </footer>
 </div>
 
 <dialog id="warn">
-  <div class="dlg-body">
+  <!-- autofocus here, otherwise the browser focuses the buttons at the bottom and
+       the scrolling dialog opens somewhere in the middle of the text. -->
+  <div class="dlg-body" tabindex="-1" autofocus>
     <h2 data-t="dlgTitle"></h2>
     <p class="dlg-lede" data-t="dlgLede"></p>
     <ul id="dlgList"></ul>
@@ -243,8 +287,19 @@ footer a { color: var(--accent); }
   </div>
 </dialog>
 
-<script src="patcher.js?v=2"></script>
-<script src="i18n.js?v=2"></script>
-<script src="page.js?v=2"></script>
+<dialog id="doc" aria-labelledby="docTitle">
+  <div class="doc-head">
+    <h2 id="docTitle"></h2>
+    <button type="button" id="docX">&times;</button>
+  </div>
+  <div class="doc-body" id="docBody"></div>
+  <div class="doc-foot">
+    <button type="button" class="btn-cancel" id="docClose" data-t="docClose"></button>
+  </div>
+</dialog>
+
+<script src="patcher.js?v=7"></script>
+<script src="i18n.js?v=7"></script>
+<script src="page.js?v=7"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@ window.I18N = {
     lede: "Baut aus der Serien-Firmware deines Rollers eine Laufbursche-Firmware. <b>Nur für den Teverun Fighter Mini in der eKFV-Ausführung, für kein anderes Gerät.</b>",
     ledePrivacy: "Alles passiert in diesem Browser, es wird nichts hochgeladen und nichts gespeichert.",
 
-    s1: "Deine Serien-Firmware",
+    s1: "Firmware-Upload",
     dropTitle: "Hex-Datei hierher ziehen oder klicken",
     dropSub: "Teverun IVCU R5.4.19",
     uploadHint: "Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware R5.4.19 findest du im Internet, zum Beispiel <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine neuere Firmware, öffne bitte ein <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.",
@@ -38,7 +38,7 @@ window.I18N = {
       "Anfahren ohne Antreten fest eingeschaltet",
       "gesperrt gilt statt der festen Klemme der begrenzte und halbierte Sollwert, die gesperrte Geschwindigkeit folgt damit dem Gang"
     ],
-    detailsNote: "Was sich gegenüber der letzten Fassung geändert hat, steht im <a id=\"detailsLink\" href=\"https://github.com/Laufbursche42/tr-fw/blob/main/docs/CHANGELOG.de.md\" target=\"_blank\" rel=\"noopener\">Changelog</a>.",
+    detailsNote: "Was sich gegenüber der letzten Fassung geändert hat, steht im <a id=\"detailsLink\" href=\"CHANGELOG.de.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog für Firmware</a>.",
     s3: "Optionen",
     blinkerTitle: "Blinker-Fix",
     blinkerText: "Nur wichtig, wenn dein Blinker dauerhaft leuchtet statt zu blinken. Das ist der Fall, wenn keine Blinkerbox verbaut ist.",
@@ -61,7 +61,7 @@ window.I18N = {
     ],
     dlgUnverified: "<b>Diese Fassung ist ungeprüft:</b> die gesperrte Geschwindigkeit der Fassung für ältere Controller ist bisher auf keinem älteren Controller nachgemessen. Der Wert, der sie begrenzt, ist aus Messungen an einem neueren Controller berechnet.",
     dlgNo: "Abbrechen",
-    dlgYes: "Verstanden, bauen",
+    dlgYes: "Verstanden und bauen",
 
     okTitle: "Fertig",
     fSource: "Grundlage",
@@ -72,16 +72,25 @@ window.I18N = {
     download: "Firmware herunterladen",
     badTitle: "Nicht gebaut",
 
-    changelog: "Changelog für Patcher",
+    source: "Quellcode",
+    changelog: "Changelog für Firmware",
+    disclaimer: "Haftungsausschluss",
     privacy: "Datenschutz",
-    license: "Lizenz"
+    license: "Lizenz",
+    trademarks: "Marken",
+    buildLabel: "Build",
+    docClose: "Schließen",
+    docLoading: "wird geladen ...",
+    docFail: "Das Dokument konnte nicht geladen werden.",
+    docEnglish: "(englisch)",
+    docGerman: "(deutsch)"
   },
 
   en: {
     lede: "Builds a Laufbursche firmware from your scooter's stock firmware. <b>For the Teverun Fighter Mini in its eKFV version only, for no other device.</b>",
     ledePrivacy: "Everything happens in this browser; nothing is uploaded and nothing is stored.",
 
-    s1: "Your stock firmware",
+    s1: "Firmware upload",
     dropTitle: "Drop a .hex here or click to choose",
     dropSub: "Teverun IVCU R5.4.19",
     uploadHint: "This page ships no firmware. You can get the matching IVCU firmware R5.4.19 online, for example <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">here</a>. Your dealer can send it to you as well. If you have a newer firmware, please open a <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">ticket</a> and attach it there, then we will build our patches for that one too.",
@@ -111,7 +120,7 @@ window.I18N = {
       "zero start permanently on",
       "while locked the capped and halved setpoint applies instead of the fixed clamp, so the locked speed follows the gear"
     ],
-    detailsNote: "What changed against the previous build is in the <a id=\"detailsLink\" href=\"https://github.com/Laufbursche42/tr-fw/blob/main/docs/CHANGELOG.en.md\" target=\"_blank\" rel=\"noopener\">changelog</a>.",
+    detailsNote: "What changed against the previous build is in the <a id=\"detailsLink\" href=\"CHANGELOG.en.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog for Firmware</a>.",
     s3: "Options",
     blinkerTitle: "Blinker fix",
     blinkerText: "Only relevant if your indicator lights up continuously instead of blinking. That is the case when no blinker box is fitted.",
@@ -134,7 +143,7 @@ window.I18N = {
     ],
     dlgUnverified: "<b>This build is unverified:</b> the locked speed of the build for older controllers has not been measured on any older controller yet. The value that caps it is calculated from measurements taken on a newer controller.",
     dlgNo: "Cancel",
-    dlgYes: "Understood, build it",
+    dlgYes: "Understood & build it",
 
     okTitle: "Done",
     fSource: "Based on",
@@ -145,8 +154,17 @@ window.I18N = {
     download: "Download firmware",
     badTitle: "Not built",
 
-    changelog: "Changelog for Patcher",
+    source: "Source",
+    changelog: "Changelog for Firmware",
+    disclaimer: "Disclaimer",
     privacy: "Privacy",
-    license: "License"
+    license: "License",
+    trademarks: "Trademarks",
+    buildLabel: "build",
+    docClose: "Close",
+    docLoading: "loading ...",
+    docFail: "The document could not be loaded.",
+    docEnglish: "(English)",
+    docGerman: "(German)"
   }
 };

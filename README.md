@@ -21,7 +21,7 @@ Two builds that exclude each other, because both patch the same four controller 
 - **V44** for newer controllers, the ones that pull away without a kick from the factory.
 - **V244** for older controllers that have no zero start of their own.
 
-What they contain and what changed is in the changelog: [German](docs/CHANGELOG.de.md), [English](docs/CHANGELOG.en.md).
+What they contain and what changed is in the changelog: [German](CHANGELOG.de.md), [English](CHANGELOG.en.md).
 
 ## What it accepts
 

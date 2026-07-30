@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v2";
+var BUILD = "v7";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -35,9 +35,13 @@ function applyLang() {
     li.innerHTML = pts[p];
     list.appendChild(li);
   }
-  var blob = "https://github.com/Laufbursche42/tr-fw/blob/main/docs/";
-  document.getElementById("changelogLink").href = blob + "CHANGELOG." + lang + ".md";
-  document.getElementById("privacyLink").href = blob + "PRIVACY." + lang + ".md";
+  // The href is only the fallback for opening in a new tab, but it follows the
+  // language as well, so a long press never lands on the other language.
+  document.getElementById("changelogLink").href = docFile("CHANGELOG");
+  document.getElementById("privacyLink").href = docFile("PRIVACY");
+  document.getElementById("licenseLink").href = docFile("LICENSE");
+  document.getElementById("trademarksLink").href = docFile("TRADEMARKS");
+  document.getElementById("docX").setAttribute("aria-label", t("docClose"));
   renderFeatures();
 
   var btns = document.querySelectorAll(".langs button");
@@ -52,12 +56,7 @@ var langButtons = document.querySelectorAll(".langs button");
 for (var b = 0; b < langButtons.length; b++) {
   langButtons[b].addEventListener("click", function () {
     lang = this.dataset.lang;
-    var variantInputs = document.querySelectorAll('input[name="variant"]');
-for (var v = 0; v < variantInputs.length; v++) {
-  variantInputs[v].addEventListener("change", renderFeatures);
-}
-
-applyLang();
+    applyLang();
   });
 }
 
@@ -199,13 +198,164 @@ buildBtn.addEventListener("click", function () {
     li.innerHTML = t("dlgUnverified");
     list.insertBefore(li, list.firstChild);
   }
-  if (typeof dlg.showModal === "function") dlg.showModal();
+  if (typeof dlg.showModal === "function") { dlg.showModal(); dlg.scrollTop = 0; }
   else doBuild();
 });
 document.getElementById("dlgNo").addEventListener("click", function () { dlg.close(); });
 document.getElementById("dlgYes").addEventListener("click", function () {
   dlg.close();
   doBuild();
+});
+
+// ---------------------------------------------------------------------------
+// Document viewer
+// ---------------------------------------------------------------------------
+
+function escHtml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Our own documents, so a link between them opens in the viewer instead of
+// handing the reader a raw markdown file.
+var DOC_TITLES = {
+  "CHANGELOG.de.md": "changelog", "CHANGELOG.en.md": "changelog",
+  "PRIVACY.de.md": "privacy", "PRIVACY.en.md": "privacy",
+  "LICENSE.md": "license", "LICENSE.de.md": "license",
+  "TRADEMARKS.md": "trademarks", "TRADEMARKS.de.md": "trademarks"
+};
+
+// Only the markdown the shipped documents actually use: headings, lists, fenced
+// code, quotes, rules, bold, inline code and links. No tables, no nesting.
+function mdToHtml(src) {
+  function inline(s) {
+    return escHtml(s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (all, text, href) {
+        if (DOC_TITLES[href]) {
+          return '<a href="' + href + '" data-docfile="' + href
+               + '" data-doc-title="' + DOC_TITLES[href] + '">' + text + "</a>";
+        }
+        return '<a href="' + href + '" target="_blank" rel="noopener">' + text + "</a>";
+      });
+  }
+
+  var lines = String(src).replace(/\r\n?/g, "\n").split("\n");
+  var out = [], para = [], list = null, inFence = false;
+
+  function flushPara() {
+    if (para.length) { out.push("<p>" + inline(para.join(" ")) + "</p>"); para = []; }
+  }
+  function closeList() { if (list) { out.push("</" + list + ">"); list = null; } }
+  function openList(kind) {
+    flushPara();
+    if (list !== kind) { closeList(); out.push("<" + kind + ">"); list = kind; }
+  }
+  function block() { flushPara(); closeList(); }
+
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i], m;
+
+    if (inFence) {
+      if (l.indexOf("```") === 0) { out.push("</code></pre>"); inFence = false; }
+      else out.push(escHtml(l));
+      continue;
+    }
+    if (l.indexOf("```") === 0) { block(); out.push("<pre><code>"); inFence = true; continue; }
+    if (/^\s*$/.test(l)) { block(); continue; }
+    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(l)) { block(); out.push("<hr>"); continue; }
+    if ((m = l.match(/^(#{1,4})\s+(.*)$/))) {
+      block();
+      out.push("<h" + m[1].length + ">" + inline(m[2]) + "</h" + m[1].length + ">");
+      continue;
+    }
+    if ((m = l.match(/^>\s?(.*)$/))) {
+      block();
+      out.push("<blockquote>" + inline(m[1]) + "</blockquote>");
+      continue;
+    }
+    if ((m = l.match(/^[-*]\s+(.*)$/))) { openList("ul"); out.push("<li>" + inline(m[1]) + "</li>"); continue; }
+    if ((m = l.match(/^\d+\.\s+(.*)$/))) { openList("ol"); out.push("<li>" + inline(m[1]) + "</li>"); continue; }
+    para.push(l.trim());
+  }
+  if (inFence) out.push("</code></pre>");
+  block();
+  return out.join("\n");
+}
+
+// The documents are fetched from this site, so a reader is never handed off to a
+// code host to read a privacy policy or a licence.
+var docDlg = document.getElementById("doc");
+var docCache = {};
+
+// CHANGELOG and PRIVACY exist per language. LICENSE and TRADEMARKS keep the plain
+// name for English, because LICENSE.md is the file GitHub reads and the binding
+// wording of the licence.
+function docFile(name) {
+  if (name === "CHANGELOG" || name === "PRIVACY") return name + "." + lang + ".md";
+  return lang === "de" ? name + ".de.md" : name + ".md";
+}
+
+function openDoc(name, titleKey) {
+  openDocFile(docFile(name), titleKey);
+}
+
+function openDocFile(file, titleKey) {
+  var body = document.getElementById("docBody");
+  // A document in the other language is labelled as such, so nobody wonders why
+  // the licence suddenly reads English.
+  var isGerman = file.indexOf(".de.") >= 0;
+  var title = t(titleKey) || file;
+  if (isGerman !== (lang === "de")) title += " " + t(isGerman ? "docGerman" : "docEnglish");
+  document.getElementById("docTitle").textContent = title;
+  if (typeof docDlg.showModal === "function") docDlg.showModal();
+
+  if (docCache[file]) { body.innerHTML = docCache[file]; body.scrollTop = 0; return; }
+  body.innerHTML = "<p>" + escHtml(t("docLoading")) + "</p>";
+  fetch(file).then(function (r) {
+    if (!r.ok) throw new Error(r.status + " " + r.statusText);
+    return r.text();
+  }).then(function (txt) {
+    docCache[file] = mdToHtml(txt);
+    body.innerHTML = docCache[file];
+    body.scrollTop = 0;
+  })["catch"](function (e) {
+    body.innerHTML = "<p>" + escHtml(t("docFail")) + "</p><pre class=\"err\">" + file + ": "
+                   + escHtml(e && e.message ? e.message : String(e)) + "</pre>";
+  });
+}
+
+// Delegated, because the changelog link in the notes is re-created on every
+// language switch.
+document.addEventListener("click", function (e) {
+  if (!e.target.closest) return;
+  var a = e.target.closest("[data-doc], [data-docfile]");
+  if (!a) return;
+  e.preventDefault();
+  var titleKey = a.getAttribute("data-doc-title") || a.getAttribute("data-t");
+  var file = a.getAttribute("data-docfile");
+  if (file) openDocFile(file, titleKey);
+  else openDoc(a.getAttribute("data-doc"), titleKey);
+});
+document.getElementById("docX").addEventListener("click", function () { docDlg.close(); });
+document.getElementById("docClose").addEventListener("click", function () { docDlg.close(); });
+
+// The footer shows the same warning to read, in the document viewer: no confirm
+// button at all, so reading the terms can never start a build.
+function openDisclaimer() {
+  var body = document.getElementById("docBody");
+  document.getElementById("docTitle").textContent = t("dlgTitle");
+  var html = "<p>" + t("dlgLede") + "</p><ul>";
+  if (selectedVariant() === "kickstart") html += '<li class="unverified">' + t("dlgUnverified") + "</li>";
+  var pts = (window.I18N[lang] || {}).dlgPoints || [];
+  for (var i = 0; i < pts.length; i++) html += "<li>" + pts[i] + "</li>";
+  body.innerHTML = html + "</ul>";
+  body.scrollTop = 0;
+  if (typeof docDlg.showModal === "function") docDlg.showModal();
+}
+document.getElementById("disclaimerLink").addEventListener("click", function (e) {
+  e.preventDefault();
+  openDisclaimer();
 });
 
 var variantInputs = document.querySelectorAll('input[name="variant"]');

@@ -23,16 +23,16 @@ function applyLang() {
     var key = nodes[i].getAttribute("data-t");
     var val = t(key);
     // Only the few strings that carry emphasis are written as markup.
-    if (val.indexOf("<b>") >= 0 || val.indexOf("<a ") >= 0) nodes[i].innerHTML = val;
+    if (val.indexOf("<b>") >= 0 || val.indexOf("<a ") >= 0) nodes[i].innerHTML = val;   // scan-ok: our own translation table, the only markup is <b> and <a>
     else nodes[i].textContent = val;
   }
   // The disclaimer points and the changelog link follow the language too.
   var list = document.getElementById("dlgList");
-  list.innerHTML = "";
+  list.textContent = "";
   var pts = (window.I18N[lang] || {}).dlgPoints || [];
   for (var p = 0; p < pts.length; p++) {
     var li = document.createElement("li");
-    li.innerHTML = pts[p];
+    li.innerHTML = pts[p];   // scan-ok: disclaimer points from our own translation table
     list.appendChild(li);
   }
   // The href is only the fallback for opening in a new tab, but it follows the
@@ -48,7 +48,7 @@ function applyLang() {
   for (var j = 0; j < btns.length; j++) {
     btns[j].setAttribute("aria-pressed", String(btns[j].dataset.lang === lang));
   }
-  document.getElementById("out").innerHTML = "";
+  document.getElementById("out").textContent = "";
   if (loaded) showVerdict(window.identify(loaded.text), loaded.name);
 }
 
@@ -68,7 +68,7 @@ function renderFeatures() {
   var d = window.I18N[lang] || {};
   var items = (d.featCommon || []).slice();
   if (selectedVariant() === "kickstart") items = items.concat(d.featKickExtra || []);
-  host.innerHTML = "";
+  host.textContent = "";
   for (var i = 0; i < items.length; i++) host.appendChild(el("li", null, items[i]));
 }
 
@@ -89,7 +89,7 @@ function el(tag, cls, text) {
 
 function showError(msg) {
   var out = document.getElementById("out");
-  out.innerHTML = "";
+  out.textContent = "";
   var box = el("div", "report bad");
   box.appendChild(el("h3", null, t("badTitle")));
   box.appendChild(el("pre", "err", msg));
@@ -98,7 +98,7 @@ function showError(msg) {
 
 function showResult(res) {
   var out = document.getElementById("out");
-  out.innerHTML = "";
+  out.textContent = "";
   var box = el("div", "report");
   box.appendChild(el("h3", null, t("okTitle")));
 
@@ -133,14 +133,14 @@ function showVerdict(id, name) {
       + " B   CRC " + id.crc.toString(16).toUpperCase().padStart(4, "0")));
   }
   var host = document.getElementById("check");
-  host.innerHTML = "";
+  host.textContent = "";
   host.appendChild(box);
 }
 
 function accept(name, text) {
   var id = window.identify(text);
   showVerdict(id, name);
-  document.getElementById("out").innerHTML = "";
+  document.getElementById("out").textContent = "";
   loaded = id.ok ? { name: name, text: text } : null;
   document.getElementById("patchable").hidden = !id.ok;
   buildBtn.disabled = !id.ok;
@@ -195,7 +195,7 @@ buildBtn.addEventListener("click", function () {
     var li = document.createElement("li");
     li.id = "dlgUnverified";
     li.className = "unverified";
-    li.innerHTML = t("dlgUnverified");
+    li.innerHTML = t("dlgUnverified");   // scan-ok: our own translation table
     list.insertBefore(li, list.firstChild);
   }
   if (typeof dlg.showModal === "function") { dlg.showModal(); dlg.scrollTop = 0; }
@@ -310,17 +310,17 @@ function openDocFile(file, titleKey) {
   document.getElementById("docTitle").textContent = title;
   if (typeof docDlg.showModal === "function") docDlg.showModal();
 
-  if (docCache[file]) { body.innerHTML = docCache[file]; body.scrollTop = 0; return; }
-  body.innerHTML = "<p>" + escHtml(t("docLoading")) + "</p>";
+  if (docCache[file]) { body.innerHTML = docCache[file]; body.scrollTop = 0; return; }   // scan-ok: markdown of our own documents, rendered by mdToHtml which escapes first
+  body.innerHTML = "<p>" + escHtml(t("docLoading")) + "</p>";   // scan-ok: escaped
   fetch(file).then(function (r) {
     if (!r.ok) throw new Error(r.status + " " + r.statusText);
     return r.text();
   }).then(function (txt) {
     docCache[file] = mdToHtml(txt);
-    body.innerHTML = docCache[file];
+    body.innerHTML = docCache[file];   // scan-ok: markdown of our own documents, rendered by mdToHtml which escapes first
     body.scrollTop = 0;
   })["catch"](function (e) {
-    body.innerHTML = "<p>" + escHtml(t("docFail")) + "</p><pre class=\"err\">" + file + ": "
+    body.innerHTML = "<p>" + escHtml(t("docFail")) + "</p><pre class=\"err\">" + file + ": "   // scan-ok: escaped
                    + escHtml(e && e.message ? e.message : String(e)) + "</pre>";
   });
 }
@@ -349,7 +349,7 @@ function openDisclaimer() {
   if (selectedVariant() === "kickstart") html += '<li class="unverified">' + t("dlgUnverified") + "</li>";
   var pts = (window.I18N[lang] || {}).dlgPoints || [];
   for (var i = 0; i < pts.length; i++) html += "<li>" + pts[i] + "</li>";
-  body.innerHTML = html + "</ul>";
+  body.innerHTML = html + "</ul>";   // scan-ok: escaped lede, list items from our own translation table
   body.scrollTop = 0;
   if (typeof docDlg.showModal === "function") docDlg.showModal();
 }

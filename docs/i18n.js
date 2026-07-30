@@ -1,0 +1,152 @@
+"use strict";
+
+// Every visible string in both languages. Keys match the data-t attributes in
+// index.html, so a missing translation shows up as an empty element rather than
+// as a silent fallback to the other language.
+window.I18N = {
+  de: {
+    lede: "Baut aus der Serien-Firmware deines Rollers eine Laufbursche-Firmware. <b>Nur für den Teverun Fighter Mini in der eKFV-Ausführung, für kein anderes Gerät.</b>",
+    ledePrivacy: "Alles passiert in diesem Browser, es wird nichts hochgeladen und nichts gespeichert.",
+
+    s1: "Deine Serien-Firmware",
+    dropTitle: "Hex-Datei hierher ziehen oder klicken",
+    dropSub: "Teverun IVCU R5.4.19",
+    uploadHint: "Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware R5.4.19 findest du im Internet, zum Beispiel <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine neuere Firmware, öffne bitte ein <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.",
+    okStock: "Serien-Firmware R5.4.19 erkannt.",
+    badUnreadable: "Das ist keine lesbare Hex-Datei.",
+    badVersion: "Falsche Firmware. Freigegeben ist nur R5.4.19.",
+    badRange: "Das ist keine unveränderte Serien-Firmware, sie sieht nach einer bereits gepatchten Datei aus.",
+    badSize: "Die Datei hat nicht die Größe der Serien-Firmware.",
+    badContent: "Die Version stimmt, der Inhalt nicht. Die Datei wurde verändert.",
+
+    s2: "Controller",
+    varStdTitle: "Standard",
+    varStdText: "Für neuere Modelle, die ab Werk einen Kickstart haben, also ohne Antreten anfahren. Sollwert und Skala hängen am selben Schalter, gesperrt wie entsperrt.",
+    varKickTitle: "Ältere Controller",
+    varKickText: "Nur für Geräte, die ab Werk keinen Kickstart haben. <b>Auf einem Controller, der ihn ohnehin schon kann, nimmt der Roller danach kein Gas mehr an.</b>",
+
+    featTitle: "Was drin ist",
+    featCommon: [
+      "Geschwindigkeitssperre, über Bluetooth ein- und ausschaltbar, der Roller startet gesperrt",
+      "gesperrt auf einen festen Wert geklemmt, am Rad gemessene 455 U/min",
+      "Sollwert und Skala passen zusammen, entsperrt liegt die volle Leistung an",
+      "Tempomat freigegeben, geschaltet wird er wie gewohnt im Display-Menü",
+      "Radgröße bleibt über den Neustart gespeichert und wirkt auf den Tacho, gesperrt zeigt das Display 10,0 Zoll",
+      "Werksvorgaben auf 10 Zoll und 52 V korrigiert"
+    ],
+    featKickExtra: [
+      "Anfahren ohne Antreten fest eingeschaltet",
+      "gesperrt gilt statt der festen Klemme der begrenzte und halbierte Sollwert, die gesperrte Geschwindigkeit folgt damit dem Gang"
+    ],
+    detailsNote: "Was sich gegenüber der letzten Fassung geändert hat, steht im <a id=\"detailsLink\" href=\"https://github.com/Laufbursche42/tr-fw/blob/main/docs/CHANGELOG.de.md\" target=\"_blank\" rel=\"noopener\">Changelog</a>.",
+    s3: "Optionen",
+    blinkerTitle: "Blinker-Fix",
+    blinkerText: "Nur wichtig, wenn dein Blinker dauerhaft leuchtet statt zu blinken. Das ist der Fall, wenn keine Blinkerbox verbaut ist.",
+
+    s4: "Bauen",
+    lockNote: "<b>Die Sperre lässt sich nur mit einer App ein- und ausschalten, die das unterstützt.</b> Ohne eine solche App bleibt der Roller gesperrt, auch mit dieser Firmware.",
+    buildBtn: "Firmware bauen",
+
+
+    dlgTitle: "Bitte einmal lesen",
+    dlgLede: "Bevor du baust, bitte diese Punkte lesen.",
+    dlgPoints: [
+      "<b>Betriebserlaubnis:</b> Mit dieser Firmware erlischt die Allgemeine Betriebserlaubnis des Rollers.",
+      "<b>Versicherungsschutz:</b> Damit entfällt in aller Regel auch der Versicherungsschutz. Bei einem Unfall haftest du persönlich, auch gegenüber Dritten.",
+      "<b>Öffentlicher Verkehr:</b> Wir raten dringend davon ab, den Roller damit außerhalb von Privatgelände zu bewegen. Was bei dir erlaubt ist, musst du selbst prüfen.",
+      "<b>Gewährleistung:</b> Hersteller und Händler können jede Gewährleistung ablehnen, sobald die Firmware verändert wurde.",
+      "<b>Fahrverhalten:</b> Der Roller fährt schneller und beschleunigt anders als ab Werk. Bremsweg, Reifen und Bremsen können sich durch die höheren Geschwindigkeiten anders verhalten.",
+      "<b>Flashen:</b> Ein abgebrochener Flashvorgang kann den Roller unfahrbar machen, bis ein Flashvorgang wieder vollständig durchläuft.",
+      "<b>Haftung:</b> Für Schäden an Fahrzeug, Personen oder Dritten, die durch oder mit dieser Firmware entstehen, übernehmen wir keine Haftung, soweit gesetzlich zulässig. Die Nutzung erfolgt auf eigenes Risiko."
+    ],
+    dlgUnverified: "<b>Diese Fassung ist ungeprüft:</b> die gesperrte Geschwindigkeit der Fassung für ältere Controller ist bisher auf keinem älteren Controller nachgemessen. Der Wert, der sie begrenzt, ist aus Messungen an einem neueren Controller berechnet.",
+    dlgNo: "Abbrechen",
+    dlgYes: "Verstanden, bauen",
+
+    okTitle: "Fertig",
+    fSource: "Grundlage",
+    fVersion: "Meldet sich als",
+    fBytes: "App-Bytes",
+    fCrc: "CRC-16",
+    fGroups: "Enthalten",
+    download: "Firmware herunterladen",
+    badTitle: "Nicht gebaut",
+
+    changelog: "Changelog für Patcher",
+    privacy: "Datenschutz",
+    license: "Lizenz"
+  },
+
+  en: {
+    lede: "Builds a Laufbursche firmware from your scooter's stock firmware. <b>For the Teverun Fighter Mini in its eKFV version only, for no other device.</b>",
+    ledePrivacy: "Everything happens in this browser; nothing is uploaded and nothing is stored.",
+
+    s1: "Your stock firmware",
+    dropTitle: "Drop a .hex here or click to choose",
+    dropSub: "Teverun IVCU R5.4.19",
+    uploadHint: "This page ships no firmware. You can get the matching IVCU firmware R5.4.19 online, for example <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">here</a>. Your dealer can send it to you as well. If you have a newer firmware, please open a <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">ticket</a> and attach it there, then we will build our patches for that one too.",
+    okStock: "Stock firmware R5.4.19 recognised.",
+    badUnreadable: "That is not a readable hex file.",
+    badVersion: "Wrong firmware. Only R5.4.19 is approved.",
+    badRange: "This is not an untouched stock firmware, it looks like an already patched file.",
+    badSize: "The file does not have the size of the stock firmware.",
+    badContent: "The version matches but the content does not. The file has been altered.",
+
+    s2: "Controller",
+    varStdTitle: "Standard",
+    varStdText: "For newer models that already do zero start from the factory, meaning they pull away without a kick. Setpoint and scale hang off the same switch, locked and unlocked alike.",
+    varKickTitle: "Older controllers",
+    varKickText: "Only for devices that have no zero start from the factory. <b>On a controller that already does it, the scooter will not take throttle any more after this.</b>",
+
+    featTitle: "What it contains",
+    featCommon: [
+      "speed lock, switched on and off over Bluetooth, the scooter boots locked",
+      "locked speed clamped to a fixed value, a measured 455 rpm at the wheel",
+      "setpoint and scale match up, full power when unlocked",
+      "cruise control released, switched in the display menu as usual",
+      "wheel size stays stored across a restart and feeds the speedometer, the display shows 10.0 inch while locked",
+      "factory defaults corrected to 10 inch and 52 V"
+    ],
+    featKickExtra: [
+      "zero start permanently on",
+      "while locked the capped and halved setpoint applies instead of the fixed clamp, so the locked speed follows the gear"
+    ],
+    detailsNote: "What changed against the previous build is in the <a id=\"detailsLink\" href=\"https://github.com/Laufbursche42/tr-fw/blob/main/docs/CHANGELOG.en.md\" target=\"_blank\" rel=\"noopener\">changelog</a>.",
+    s3: "Options",
+    blinkerTitle: "Blinker fix",
+    blinkerText: "Only relevant if your indicator lights up continuously instead of blinking. That is the case when no blinker box is fitted.",
+
+    s4: "Build",
+    lockNote: "<b>The lock can only be switched on and off with an app that supports it.</b> Without such an app the scooter stays locked, even with this firmware.",
+    buildBtn: "Build firmware",
+
+
+    dlgTitle: "Please read this once",
+    dlgLede: "Before you build, please read these points.",
+    dlgPoints: [
+      "<b>Road approval:</b> With this firmware the scooter loses its road approval.",
+      "<b>Insurance:</b> That usually voids your insurance cover as well. In an accident you are personally liable, including towards third parties.",
+      "<b>Public roads:</b> We strongly advise against riding it anywhere but on private property. What is allowed where you live is yours to check.",
+      "<b>Warranty:</b> The manufacturer and your dealer can refuse any warranty claim once the firmware has been changed.",
+      "<b>How it rides:</b> The scooter goes faster and accelerates differently than it did from the factory. Braking distance, tyres and brakes can behave differently at the higher speeds.",
+      "<b>Flashing:</b> An interrupted flash can leave the scooter unrideable until a flash completes.",
+      "<b>Liability:</b> To the extent the law allows, we accept no liability for damage to the vehicle, to people or to third parties caused by or with this firmware. You use it at your own risk."
+    ],
+    dlgUnverified: "<b>This build is unverified:</b> the locked speed of the build for older controllers has not been measured on any older controller yet. The value that caps it is calculated from measurements taken on a newer controller.",
+    dlgNo: "Cancel",
+    dlgYes: "Understood, build it",
+
+    okTitle: "Done",
+    fSource: "Based on",
+    fVersion: "Reports as",
+    fBytes: "App bytes",
+    fCrc: "CRC-16",
+    fGroups: "Included",
+    download: "Download firmware",
+    badTitle: "Not built",
+
+    changelog: "Changelog for Patcher",
+    privacy: "Privacy",
+    license: "License"
+  }
+};

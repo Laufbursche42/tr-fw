@@ -2,13 +2,13 @@
 
 Was sich am Patcher und an der gebauten Firmware ändert.
 
-Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die Fassung für ältere Modelle ohne Kickstart ab Werk trägt dieselbe Nummer plus 200, also V44 und V244.
+Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die Version für ältere Modelle ohne Kickstart ab Werk trägt dieselbe Nummer plus 200, also V44 und V244.
 
 ---
 
 ## Was drin ist
 
-Beide Fassungen enthalten:
+Beide Versionen enthalten:
 
 - Geschwindigkeitssperre, über Bluetooth aus einer passenden App ein- und ausschaltbar, der Roller startet gesperrt
 - gesperrt wird der Sollwert, den die Steuerung an den Motorcontroller gibt, auf einen festen Wert geklemmt, unabhängig vom gewählten Gang. Am Rad gemessen sind das 455 U/min, also 21,8 km/h bei 80 cm Abrollumfang und 22,1 bei 81 cm
@@ -18,7 +18,7 @@ Beide Fassungen enthalten:
 - Werksvorgaben sind 10 Zoll und 52 V
 - Blinker-Fix, beim Bauen wählbar
 
-Die Fassung für ältere Controller (V244) zusätzlich:
+Die Version für ältere Controller (V244) zusätzlich:
 
 - Anfahren ohne Antreten (Kickstart) fest eingeschaltet
 - gesperrt gilt statt der festen Klemme der begrenzte und halbierte Sollwert. Die gesperrte Höchstgeschwindigkeit ist damit nicht in jedem Gang gleich: nur der oberste Gang läuft bis an die Grenze, die unteren bleiben darunter
@@ -37,7 +37,7 @@ Die Fassung für ältere Controller (V244) zusätzlich:
 
 - Fällt der Controller auf seine Werksvorgaben zurück, fährt der Roller weiter statt in den Unterspannungsschutz zu laufen. Die Vorgaben tragen 10 Zoll Radgröße und 52 V Packspannung, also die Werte, die jeder Roller hat, den wir patchen.
 
-**Nur die Fassung für ältere Controller (V244)**
+**Nur die Version für ältere Controller (V244)**
 
 - Anfahren ohne Antreten ist fest eingeschaltet, egal was in App oder Display-Menü eingestellt ist. Manche älteren Controller ignorieren diese Einstellung sonst vollständig.
 - Gesperrt wird der Sollwert zuerst begrenzt und dann halbiert. Deshalb hängt die gesperrte Höchstgeschwindigkeit am gewählten Gang: der oberste Gang läuft bis an die Grenze, die unteren Gänge bleiben darunter. So kommt kein Gang gesperrt über die Grenze.

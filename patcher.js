@@ -211,7 +211,7 @@ function buildHex(img) {
 // The two builds. Both carry the lock, the wheel size handling, the corrected
 // factory defaults and the optional blinker fix. Nothing here pushes values
 // between the controller and the display: the display owns the settings the way
-// it does from the factory, and anything that force-fed it made the two fight.
+// it does from the factory and anything that force-fed it made the two fight.
 // SCALEGATE and KICKSTART patch the same four frame-builder sites, so they are
 // mutually exclusive and that is what separates the variants.
 var VARIANTS = {

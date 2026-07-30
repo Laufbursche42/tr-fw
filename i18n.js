@@ -10,7 +10,7 @@ window.I18N = {
 
     s1: "Firmware-Upload",
     dropTitle: "Hex-Datei hierher ziehen oder klicken",
-    dropSub: "Teverun IVCU R5.4.19",
+    dropSub: "Teverun IVCU R5.4.19 &middot; .hex oder .txt",
     uploadHint: "Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware R5.4.19 findest du im Internet, zum Beispiel <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine neuere Firmware, öffne bitte ein <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.",
     okStock: "Serien-Firmware R5.4.19 erkannt.",
     badUnreadable: "Das ist keine lesbare Hex-Datei.",
@@ -38,7 +38,7 @@ window.I18N = {
       "Anfahren ohne Antreten fest eingeschaltet",
       "gesperrt gilt statt der festen Klemme der begrenzte und halbierte Sollwert, die gesperrte Geschwindigkeit folgt damit dem Gang"
     ],
-    detailsNote: "Was sich gegenüber der letzten Fassung geändert hat, steht im <a id=\"detailsLink\" href=\"CHANGELOG.de.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog für Firmware</a>.",
+    detailsNote: "Was sich gegenüber der letzten Version geändert hat, steht im <a id=\"detailsLink\" href=\"CHANGELOG.de.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog für Firmware</a>.",
     s3: "Optionen",
     blinkerTitle: "Blinker-Fix",
     blinkerText: "Nur wichtig, wenn dein Blinker dauerhaft leuchtet statt zu blinken. Das ist der Fall, wenn keine Blinkerbox verbaut ist.",
@@ -59,7 +59,8 @@ window.I18N = {
       "<b>Flashen:</b> Ein abgebrochener Flashvorgang kann den Roller unfahrbar machen, bis ein Flashvorgang wieder vollständig durchläuft.",
       "<b>Haftung:</b> Für Schäden an Fahrzeug, Personen oder Dritten, die durch oder mit dieser Firmware entstehen, übernehmen wir keine Haftung, soweit gesetzlich zulässig. Die Nutzung erfolgt auf eigenes Risiko."
     ],
-    dlgUnverified: "<b>Diese Fassung ist ungeprüft:</b> die gesperrte Geschwindigkeit der Fassung für ältere Controller ist bisher auf keinem älteren Controller nachgemessen. Der Wert, der sie begrenzt, ist aus Messungen an einem neueren Controller berechnet.",
+    dlgUnverified: "<b>Diese Version ist ungeprüft:</b> die gesperrte Geschwindigkeit der Version für ältere Controller ist bisher auf keinem älteren Controller nachgemessen. Der Wert, der sie begrenzt, ist aus Messungen an einem neueren Controller berechnet.",
+    dlgConsent: "Ich habe den Haftungsausschluss gelesen und baue auf eigene Gefahr.",
     dlgNo: "Abbrechen",
     dlgYes: "Verstanden und bauen",
 
@@ -92,7 +93,7 @@ window.I18N = {
 
     s1: "Firmware upload",
     dropTitle: "Drop a .hex here or click to choose",
-    dropSub: "Teverun IVCU R5.4.19",
+    dropSub: "Teverun IVCU R5.4.19 &middot; .hex or .txt",
     uploadHint: "This page ships no firmware. You can get the matching IVCU firmware R5.4.19 online, for example <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">here</a>. Your dealer can send it to you as well. If you have a newer firmware, please open a <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">ticket</a> and attach it there, then we will build our patches for that one too.",
     okStock: "Stock firmware R5.4.19 recognised.",
     badUnreadable: "That is not a readable hex file.",
@@ -142,6 +143,7 @@ window.I18N = {
       "<b>Liability:</b> To the extent the law allows, we accept no liability for damage to the vehicle, to people or to third parties caused by or with this firmware. You use it at your own risk."
     ],
     dlgUnverified: "<b>This build is unverified:</b> the locked speed of the build for older controllers has not been measured on any older controller yet. The value that caps it is calculated from measurements taken on a newer controller.",
+    dlgConsent: "I have read the disclaimer and I build at my own risk.",
     dlgNo: "Cancel",
     dlgYes: "Understood & build it",
 

@@ -12,7 +12,7 @@ Der Quellcode ist offen, damit jeder vorher nachlesen kann, was dieses Werkzeug 
 
 Diese Bedingungen legt der Autor als Rechteinhaber über die Grundlizenz.
 
-1. **Was diese Lizenz abdeckt und was nicht.** Sie deckt den Code in diesem Repository ab, also den Patcher, die Seite, die Patch-Tabellen und die Dokumentation. Sie deckt die Firmware des Roller-Herstellers **nicht** ab. Diese Firmware ist urheberrechtlich geschütztes Werk des Herstellers. Sie wird hier nicht verbreitet, und diese Lizenz gibt dir keinerlei Recht daran. Das Serienabbild beizubringen, ist Sache des Nutzers.
+1. **Was diese Lizenz abdeckt und was nicht.** Sie deckt den Code in diesem Repository ab, also den Patcher, die Seite, die Patch-Tabellen und die Dokumentation. Sie deckt die Firmware des Roller-Herstellers **nicht** ab. Diese Firmware ist urheberrechtlich geschütztes Werk des Herstellers. Sie wird hier nicht verbreitet und diese Lizenz gibt dir keinerlei Recht daran. Das Serienabbild beizubringen, ist Sache des Nutzers.
 
 2. **Keine Gewähr für das, was du damit baust.** Eine gepatchte Firmware kann ein Fahrzeug außerhalb des Zustands bringen, in dem es genehmigt wurde. Wer eine solche Firmware baut, verbreitet oder flasht, trägt dafür die Verantwortung, nicht der Autor dieses Werkzeugs.
 
@@ -25,7 +25,7 @@ Diese Zusammenfassung ist kein Lizenztext. Sie nennt nur die Punkte, nach denen 
 - **Erlaubte Zwecke.** Jeder nicht kommerzielle Zweck ist erlaubt. Dazu gehören private Nutzung, Forschung, Ausprobieren und Testen, Hobbyprojekte sowie die Nutzung durch gemeinnützige Organisationen, Bildungs- und Forschungseinrichtungen oder Behörden.
 - **Kommerzielle Nutzung ist nicht erlaubt.** Wer den Code geschäftlich einsetzen will, braucht eine eigene Vereinbarung mit dem Autor.
 - **Weitergeben und ändern** darfst du für erlaubte Zwecke. Wer eine Kopie von dir erhält, muss die Lizenz und den Urheberrechtshinweis mitbekommen.
-- **Keine Haftung.** Soweit das Gesetz es zulässt, wird die Software ohne jede Gewährleistung bereitgestellt, und der Lizenzgeber haftet nicht für Schäden aus diesen Bedingungen oder aus der Nutzung der Software.
+- **Keine Haftung.** Soweit das Gesetz es zulässt, wird die Software ohne jede Gewährleistung bereitgestellt und der Lizenzgeber haftet nicht für Schäden aus diesen Bedingungen oder aus der Nutzung der Software.
 - **Verstöße.** Beim ersten schriftlich mitgeteilten Verstoß bleiben die Lizenzen erhalten, wenn du binnen 32 Tagen die Bedingungen vollständig einhältst und das Vergangene praktisch berichtigst. Sonst enden sie sofort.
 
 Der vollständige Text steht unter <https://polyformproject.org/licenses/noncommercial/1.0.0> sowie in [LICENSE.md](LICENSE.md).

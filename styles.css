@@ -145,6 +145,10 @@ dialog::backdrop { background: rgba(0,0,0,.72); }
 .dlg-body ul { margin: 0 0 .9rem; padding-left: 1.15rem; color: var(--label); font-size: .9rem; }
 .dlg-body .dlg-lede { margin: 0 0 .8rem; color: var(--label); font-size: .9rem; }
 .dlg-body li b { color: var(--text); }
+/* The tick box that arms the build button. */
+.consent-row { display: flex; align-items: flex-start; gap: .6rem; margin: 0 0 .8rem;
+  color: var(--text); font-size: .9rem; line-height: 1.5; cursor: pointer; }
+.consent-row input { margin: .2rem 0 0; accent-color: var(--accent); width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
 .dlg-body li.unverified { color: var(--warn); }
 .dlg-body li.unverified b { color: var(--warn); }
 dialog { max-height: 88vh; overflow-y: auto; }
@@ -153,6 +157,7 @@ dialog { max-height: 88vh; overflow-y: auto; }
 .dlg-foot button { font: 600 .92rem/1 inherit; padding: .7rem 1.1rem; border-radius: .4rem; cursor: pointer; }
 .btn-cancel { background: transparent; color: var(--label); border: 1px solid var(--border); }
 .btn-go { background: var(--accent-2); color: #0A0C10; border: 0; }
+.btn-go:disabled { opacity: .4; cursor: not-allowed; }
 .dlg-foot button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Document viewer: the texts belong to this page, so they open here instead of

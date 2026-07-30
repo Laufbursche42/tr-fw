@@ -2,14 +2,12 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v11";
+var BUILD = "v24";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
 
 document.getElementById("pageBuild").textContent = BUILD;
-document.getElementById("tagStd").textContent = "V" + window.OTA.FW_BUILD;
-document.getElementById("tagKick").textContent = "V" + window.OTA.FW_BUILD_KICK;
 
 function t(key) {
   var d = window.I18N[lang];
@@ -22,8 +20,9 @@ function applyLang() {
   for (var i = 0; i < nodes.length; i++) {
     var key = nodes[i].getAttribute("data-t");
     var val = t(key);
-    // Only the few strings that carry emphasis are written as markup.
-    if (val.indexOf("<b>") >= 0 || val.indexOf("<a ") >= 0) nodes[i].innerHTML = val;   // scan-ok: our own translation table, the only markup is <b> and <a>
+    // Anything carrying a tag or an entity goes in as markup; the rest is plain text. Testing
+    // for the tag alone left an entity to show up raw in the page.
+    if (/[<&]/.test(val)) nodes[i].innerHTML = val;   // scan-ok: our own translation table, the only markup is <b> and <a>
     else nodes[i].textContent = val;
   }
   // The disclaimer points and the changelog link follow the language too.
@@ -42,6 +41,7 @@ function applyLang() {
   document.getElementById("licenseLink").href = docFile("LICENSE");
   document.getElementById("trademarksLink").href = docFile("TRADEMARKS");
   document.getElementById("docX").setAttribute("aria-label", t("docClose"));
+  renderVariantOptions();
   renderFeatures();
 
   var btns = document.querySelectorAll(".langs button");
@@ -60,20 +60,63 @@ for (var b = 0; b < langButtons.length; b++) {
   });
 }
 
+// The three builds, in the order they are offered. Everything about a build that the
+// page shows is looked up from here, so adding a fourth is one row.
+var BUILDS = [
+  { key: "standard",  title: "varStdTitle",   when: "varStdWhen",   extra: "featStdExtra",   stamp: "FW_BUILD" },
+  { key: "noscale",   title: "varScaleTitle", when: "varScaleWhen", extra: "featScaleExtra", stamp: "FW_BUILD_SCALE" },
+  { key: "kickstart", title: "varKickTitle",  when: "varKickWhen",  extra: "featKickExtra",  stamp: "FW_BUILD_KICK" }
+];
+
+// Option labels carry the version number, so the list itself says which build is which.
+function renderVariantOptions() {
+  var sel = document.getElementById("variant");
+  var keep = sel.value;
+  sel.textContent = "";
+  for (var i = 0; i < BUILDS.length; i++) {
+    var b = BUILDS[i];
+    var o = el("option", null, t(b.title) + "  ·  V" + window.OTA[b.stamp]);
+    o.value = b.key;
+    sel.appendChild(o);
+  }
+  sel.value = keep || BUILDS[0].key;
+}
+
+// All three lines at once, the chosen one marked, so the reason to switch is readable
+// without opening the list.
+function renderGuide() {
+  var host = document.getElementById("varGuide");
+  if (!host) return;
+  host.textContent = "";
+  var now = selectedVariant();
+  for (var i = 0; i < BUILDS.length; i++) {
+    var li = el("li");
+    if (BUILDS[i].key === now) li.className = "on";
+    li.innerHTML = t(BUILDS[i].when);   // scan-ok: our own translation table, the only markup is <b>
+    host.appendChild(li);
+  }
+}
+
+function currentBuild() {
+  for (var i = 0; i < BUILDS.length; i++) if (BUILDS[i].key === selectedVariant()) return BUILDS[i];
+  return BUILDS[0];
+}
+
 // The feature list follows the selected build. Common points are held once and
 // the extra ones appended, so the two lists cannot drift apart.
 function renderFeatures() {
   var host = document.getElementById("featureList");
   if (!host) return;
   var d = window.I18N[lang] || {};
-  var items = (d.featCommon || []).slice();
-  if (selectedVariant() === "kickstart") items = items.concat(d.featKickExtra || []);
+  var b = currentBuild();
+  var items = (d.featCommon || []).slice().concat(d[b.extra] || []);
   host.textContent = "";
   for (var i = 0; i < items.length; i++) host.appendChild(el("li", null, items[i]));
+  renderGuide();
 }
 
 function selectedVariant() {
-  return document.querySelector('input[name="variant"]:checked').value;
+  return document.getElementById("variant").value || "standard";
 }
 
 var buildBtn = document.getElementById("build");
@@ -374,9 +417,6 @@ document.getElementById("disclaimerLink").addEventListener("click", function (e)
   openDisclaimer();
 });
 
-var variantInputs = document.querySelectorAll('input[name="variant"]');
-for (var v = 0; v < variantInputs.length; v++) {
-  variantInputs[v].addEventListener("change", renderFeatures);
-}
+document.getElementById("variant").addEventListener("change", renderFeatures);
 
 applyLang();

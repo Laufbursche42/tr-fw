@@ -2,26 +2,59 @@
 
 What changes in the patcher and in the firmware it builds.
 
-The version number is the stamp the firmware reports over Bluetooth. The build for older models without a factory kickstart carries the same number plus 200, so V44 and V244.
+The version number is the stamp the firmware reports over Bluetooth. The same number plus 100 is the build with the other setpoint scale, plus 200 the build for older models without a factory kickstart. So there is V44, V144 and V244.
+
+---
+
+## Which build is yours
+
+There are three. They differ in what the controller tells the motor controller about the setpoint scale, everything else is the same.
+
+- **V44, standard.** The normal case. Take it when you cannot tell yet which of the other two cases applies to your scooter.
+- **V144, other scale.** For scooters that get stuck at about 15 km/h unlocked with the standard build.
+- **V244, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
+
+The choice is not one way. If a build does not suit, pick another one in the patcher and flash again. There is no limit on how often a controller may be flashed.
 
 ---
 
 ## What it contains
 
-Both builds carry:
+All three builds carry:
 
 - speed lock, switched on and off over Bluetooth from an app that supports it, the scooter boots locked
 - while locked the setpoint the controller hands the motor controller is clamped to a fixed value, whatever gear is selected. Measured at the wheel that is 455 rpm, so 21.8 km/h at an 80 cm rolling circumference and 22.1 at 81 cm
-- setpoint and scale match up, full power when unlocked
 - cruise control released, switched in the display menu as usual
 - wheel size stays stored across a restart and feeds the speedometer, the display shows 10.0 inch while locked
 - factory defaults are 10 inch and 52 V
 - blinker fix, selectable when building
 
-The build for older controllers (V244) also has:
+The standard build (V44) only:
+
+- setpoint and scale match up, full power when unlocked
+
+The other-scale build (V144) only:
+
+- the scale stays the way the controller gets it set from the factory
+
+The build for older controllers (V244) only:
 
 - zero start (kickstart) permanently on
 - while locked the capped and halved setpoint applies instead of the fixed clamp. The locked top speed is therefore not the same in every gear: only the top gear runs up to the limit, the lower ones stay below it
+
+---
+
+## V144
+
+New, for scooters that get stuck at about **15 km/h** unlocked with the standard build.
+
+The setpoint the controller hands the motor controller is not a speed, it is a number on a scale. A single bit in the frame to the controller says which of the two scales applies. The standard build clears that bit on unlock so that full power is available.
+
+Some controllers read that bit the other way round. On those the cleared bit selects the smaller scale, so the scooter runs slower unlocked rather than faster. Measured on one affected machine that came out at roughly 15 km/h. V144 leaves the bit alone, so it stays at whatever the factory sets. Apart from that it is identical to the standard build.
+
+This hangs off the controller, not off the model nor the year it was built. Nothing on the outside gives it away, so trying is all there is: if your scooter does not pull properly when unlocked on the standard build, take V144.
+
+**When you need it:** your scooter will not go past roughly 15 km/h unlocked with the standard build. Otherwise take the standard build.
 
 ---
 

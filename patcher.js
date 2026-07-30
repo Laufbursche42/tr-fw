@@ -14,6 +14,7 @@
 
 //
 var FW_BUILD = 44;
+var FW_BUILD_SCALE = 144;
 var FW_BUILD_KICK = 244;
 var PATCHES = {
   CORE: [
@@ -45,7 +46,6 @@ var PATCHES = {
     [0x080103AC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x080105CC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x0801DD1A, [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x70,0x47], [0x50,0x2F,0x00,0xDD,0x50,0x27,0x7F,0x08,0x70,0x47,0x00,0xBF,0x00,0xBF,0x00,0xBF,0x00,0xBF,0x00,0xBF]],
-    [0x0800C5DE, [0x2C], [0xF4]],
   ],
   WHEEL: [
     [0x0800D3B0, [0x80,0x79,0xAE,0x49], [0x10,0xF0,0xA4,0xBB]],
@@ -220,6 +220,14 @@ var VARIANTS = {
     stamp: FW_BUILD,
     groups: ["CORE", "WHEEL", "SCALEGATE", "DEFAULTS"]
   },
+  // Same build without the scale gate, so bit5 keeps doing what it does from the
+  // factory. For controllers that read the setpoint scale the other way round and
+  // therefore get SLOWER with the standard build.
+  noscale: {
+    key: "noscale",
+    stamp: FW_BUILD_SCALE,
+    groups: ["CORE", "WHEEL", "DEFAULTS"]
+  },
   kickstart: {
     key: "kickstart",
     stamp: FW_BUILD_KICK,
@@ -230,6 +238,9 @@ var VARIANTS = {
 // The one firmware this patcher is approved for, as a fingerprint of the image
 // itself rather than of the file: the same firmware split into different hex
 // record lengths still passes, anything else does not.
+// The single byte CORE writes as "movs r7,#<stamp>"; it is what the scooter reports over BLE.
+var STAMP_ADDR = 0x0800C5DE;
+
 var STOCK_R5419 = {
   version: "5.4.19",
   first: 0x08007000,
@@ -290,6 +301,10 @@ function build(text, variantKey, opts) {
     if (!rows) throw new Error("unknown patch group " + groups[i]);
     applyGroup(img, rows, groups[i].toLowerCase());
   }
+  // CORE leaves the reported version byte at the standard number; every variant
+  // stamps its own here, so the number the scooter reports names the build exactly.
+  img.mem.set(STAMP_ADDR, v.stamp);
+
   var res = buildHex(img);
   res.variant = v;
   res.groups = groups;
@@ -299,7 +314,7 @@ function build(text, variantKey, opts) {
 
 // Usable both in the page (window) and in a plain node check, so the
 // verification runs the very same code the page runs.
-var API = { FW_BUILD: FW_BUILD, FW_BUILD_KICK: FW_BUILD_KICK, fromHex: fromHex, applyGroup: applyGroup,
+var API = { FW_BUILD: FW_BUILD, FW_BUILD_SCALE: FW_BUILD_SCALE, FW_BUILD_KICK: FW_BUILD_KICK, fromHex: fromHex, applyGroup: applyGroup,
             buildHex: buildHex, crc16Modbus: crc16Modbus, build: build, VARIANTS: VARIANTS,
             identify: identify, STOCK_R5419: STOCK_R5419 };
 

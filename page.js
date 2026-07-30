@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v24";
+var BUILD = "v25";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check

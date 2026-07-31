@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v28";
+var BUILD = "v29";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -57,7 +57,10 @@ var langButtons = document.querySelectorAll(".langs button");
 for (var b = 0; b < langButtons.length; b++) {
   langButtons[b].addEventListener("click", function () {
     lang = this.dataset.lang;
-    applyLang();
+    // Someone arriving at .../#disclaimer meant the terms, an address written in the documents.
+if (location.hash.replace("#", "").toLowerCase().indexOf("disclaimer") === 0) openDisclaimer();
+
+applyLang();
   });
 }
 
@@ -281,6 +284,16 @@ var DOC_TITLES = {
 
 // Only the markdown the shipped documents actually use: headings, lists, fenced
 // code, quotes, rules, bold, inline code and links. No tables, no nesting.
+// GitHub's heading slugs, so an anchor written inside a document keeps working here.
+function slug(s) {
+  // One space becomes one dash, runs are NOT collapsed: a code host drops the punctuation
+  // first, so "Disclaimer & Trademarks" ends up with two dashes and an anchor written for
+  // that host has to find the same id here.
+  return s.toLowerCase().trim()
+    .replace(/[^a-z0-9 _-]/g, "")
+    .replace(/ /g, "-");
+}
+
 function mdToHtml(src) {
   function inline(s) {
     return escHtml(s)
@@ -290,6 +303,11 @@ function mdToHtml(src) {
         if (DOC_TITLES[href]) {
           return '<a href="' + href + '" data-docfile="' + href
                + '" data-doc-title="' + DOC_TITLES[href] + '">' + text + "</a>";
+        }
+        // An anchor belongs to the document being read, so it scrolls instead of
+        // opening a tab on an address that answers to nothing.
+        if (href.charAt(0) === "#") {
+          return '<a href="' + href + '" data-anchor="' + href.slice(1) + '">' + text + "</a>";
         }
         return '<a href="' + href + '" target="_blank" rel="noopener">' + text + "</a>";
       });
@@ -321,7 +339,8 @@ function mdToHtml(src) {
     if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(l)) { block(); out.push("<hr>"); continue; }
     if ((m = l.match(/^(#{1,4})\s+(.*)$/))) {
       block();
-      out.push("<h" + m[1].length + ">" + inline(m[2]) + "</h" + m[1].length + ">");
+      out.push("<h" + m[1].length + ' id="' + slug(m[2]) + '">' + inline(m[2])
+               + "</h" + m[1].length + ">");
       continue;
     }
     if ((m = l.match(/^>\s?(.*)$/))) {
@@ -387,6 +406,14 @@ function openDocFile(file, titleKey) {
 // language switch.
 document.addEventListener("click", function (e) {
   if (!e.target.closest) return;
+  var jump = e.target.closest("[data-anchor]");
+  if (jump) {
+    e.preventDefault();
+    var body = document.getElementById("docBody");
+    var target = body ? body.querySelector("#" + CSS.escape(jump.getAttribute("data-anchor"))) : null;
+    if (target) body.scrollTop = target.offsetTop - body.offsetTop;
+    return;
+  }
   var a = e.target.closest("[data-doc], [data-docfile]");
   if (!a) return;
   e.preventDefault();

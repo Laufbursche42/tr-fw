@@ -10,12 +10,15 @@
 //
 // A table row is [address, expected stock bytes or null, replacement bytes]. A
 // null expectation means the bytes are appended past the end of the stock image.
+//
+// Every address in the tables is an R5.4.19 address. R5.4.21 carries the same
+// code at different addresses, so its rows are translated at build time from the
+// maps in BASES. The relocation is not one offset: it runs from 0 to 422 bytes
+// depending on where in flash the site sits, which is why the map is a table.
 // ---------------------------------------------------------------------------
 
-//
-var FW_BUILD = 44;
-var FW_BUILD_SCALE = 144;
-var FW_BUILD_KICK = 244;
+var FW_BUILD = 45;
+var FW_BUILD_KICK = 245;
 var PATCHES = {
   CORE: [
     [0x08007150, [0x00,0x48,0x00,0x47], [0x16,0xF0,0x10,0xBD]],
@@ -40,43 +43,20 @@ var PATCHES = {
   BLINKER: [
     [0x08019610, [0xFF,0xF7,0x90,0xFF], [0x00,0xBF,0x00,0xBF]],
   ],
+  // Clears the setpoint scale bit the four frame builders set, then halves the
+  // clamped setpoint to stay in the scale the controller then reads. The clamp
+  // itself keeps the shape core wrote, so the same two bytes carry the limit.
   KICKSTART: [
     [0x08010054, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x08010204, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x080103AC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x080105CC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
-    [0x0801DD1A, [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x70,0x47], [0x50,0x2F,0x00,0xDD,0x50,0x27,0x7F,0x08,0x70,0x47,0x00,0xBF,0x00,0xBF,0x00,0xBF,0x00,0xBF,0x00,0xBF]],
+    [0x0801DD1A, [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x70,0x47,0x00,0xBF], [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x7F,0x08,0x70,0x47]],
   ],
   WHEEL: [
     [0x0800D3B0, [0x80,0x79,0xAE,0x49], [0x10,0xF0,0xA4,0xBB]],
     [0x0801730E, [0x08,0x70], [0x00,0xBF]],
     [0x0801DAFC, null, [0x02,0x79,0x0A,0x49,0x09,0x78,0x01,0xB9,0x00,0xBF,0x09,0x49,0x0B,0x78,0x0A,0x70,0x9A,0x42,0x06,0xD0,0x07,0x49,0xCA,0x70,0x01,0xB5,0x01,0x20,0xF9,0xF7,0x78,0xFA,0x03,0xBC,0x80,0x79,0x04,0x49,0xEF,0xF7,0x47,0xBC,0x00,0xBF,0x40,0x1B,0x00,0x20,0x9D,0x02,0x00,0x20,0x28,0x1A,0x00,0x20,0xA5,0x02,0x00,0x20,0xA5,0x01,0x19,0x02,0x57,0x19,0x00,0x00]],
-  ],
-  SCALEGATE: [
-    [0x08010054, [0x46,0xF0,0x20,0x06], [0x0D,0xF0,0x98,0xFE]],
-    [0x08010204, [0x46,0xF0,0x20,0x06], [0x0D,0xF0,0xC0,0xFD]],
-    [0x080103AC, [0x46,0xF0,0x20,0x06], [0x0D,0xF0,0xEC,0xFC]],
-    [0x080105CC, [0x46,0xF0,0x20,0x06], [0x0D,0xF0,0xDC,0xFB]],
-    [0x0801DD88, null, [0x01,0xB4,0x05,0x48,0x00,0x78,0x10,0xB1,0x26,0xF0,0x20,0x06,0x01,0xE0,0x46,0xF0,0x20,0x06,0x01,0xBC,0x70,0x47,0x00,0xBF,0x40,0x1B,0x00,0x20]],
-  ],
-  FACTORYRESET: [
-    [0x0801DB5C, [0xEF,0xF7,0x82,0xBF], [0x00,0xF0,0x22,0xB9]],
-    [0x0801DDA4, null, [0x1C,0x28,0x07,0xD1,0x9D,0xF8,0x06,0x10,0xA5,0x29,0x03,0xD1,0x01,0x21,0x02,0x48,0x01,0x70,0x00,0xBF,0xEF,0xF7,0x54,0xBE,0x40,0x1B,0x00,0x20]],
-  ],
-  DUMP: [
-    [0x0801DDB8, [0xEF,0xF7,0x54,0xBE], [0x00,0xF0,0x02,0xB8]],
-    [0x0800BF6E, [0x00,0xBF,0x00,0xBF], [0x11,0xF0,0x33,0xFF]],
-    [0x0801DDC0, null, [0x1D,0x28,0x04,0xD1,0x9D,0xF8,0x06,0x10,0x02,0x48,0x01,0x70,0x00,0xBF,0xEF,0xF7,0x49,0xBE,0x00,0xBF,0x43,0x1B,0x00,0x20,0x04,0x48,0x00,0x78,0x00,0xF0,0x7F,0x00,0x03,0x49,0x08,0x5C,0x8D,0xF8,0x16,0x00,0x70,0x47,0x00,0xBF,0x43,0x1B,0x00,0x20,0x28,0x1A,0x00,0x20]],
-  ],
-  INVALIDATE: [
-    [0x0801DDCE, [0xEF,0xF7,0x49,0xBE], [0x00,0xF0,0x11,0xB8]],
-    [0x0801DDF4, null, [0x1E,0x28,0x0D,0xD1,0x9D,0xF8,0x06,0x10,0xA5,0x29,0x09,0xD1,0x05,0x48,0x02,0x88,0xD2,0x43,0x0C,0xB4,0x6A,0x46,0x02,0x21,0x84,0x20,0xF9,0xF7,0xD7,0xF8,0x0C,0xBC,0xEF,0xF7,0x26,0xBE,0x5C,0x1A,0x00,0x20]],
-  ],
-  DISPLAYSYNC: [
-    [0x08017284, [0xFF,0xF7,0xC1,0xFF], [0x06,0xF0,0xCA,0xFD]],
-    [0x08010ACE, [0xCC,0x72,0x08,0x46], [0x0D,0xF0,0xAF,0xF9]],
-    [0x080107A2, [0xCC,0x72,0x56,0x48], [0x0D,0xF0,0x59,0xFB]],
-    [0x0801DE1C, null, [0x03,0x48,0x48,0x21,0x01,0x70,0x00,0x21,0x41,0x70,0xF9,0xF7,0xF0,0xB9,0x00,0xBF,0x44,0x1B,0x00,0x20,0x04,0xB4,0x08,0x48,0x02,0x78,0x42,0xB1,0x01,0x3A,0x02,0x70,0x42,0x78,0x14,0x46,0x01,0x32,0x06,0x2A,0x00,0xD1,0x00,0x22,0x42,0x70,0x04,0xBC,0xCC,0x72,0x08,0x46,0x70,0x47,0x00,0xBF,0x44,0x1B,0x00,0x20,0x04,0xB4,0x08,0x48,0x02,0x78,0x42,0xB1,0x01,0x3A,0x02,0x70,0x42,0x78,0x14,0x46,0x01,0x32,0x06,0x2A,0x00,0xD1,0x00,0x22,0x42,0x70,0x04,0xBC,0xCC,0x72,0x02,0x48,0x70,0x47,0x00,0xBF,0x44,0x1B,0x00,0x20,0x9A,0x02,0x00,0x20]],
   ],
   DEFAULTS: [
     [0x0801D78F, [0x6E], [0x64]],
@@ -86,6 +66,25 @@ var PATCHES = {
 };
 
 var DEFAULT_START_ADDR = 0x08007149;
+
+// Anything at or above this address is appended past the end of the stock image.
+var CAVE_LO = 0x0801DAFC;
+
+// The single byte CORE writes as "movs r7,#<stamp>"; it is what the scooter reports over BLE.
+var STAMP_ADDR = 0x0800C5DE;
+
+// The locked clamp. One routine, two constants: the firmware picks between them
+// on the byte at 0x20001B41, which core sets the first time the lock is opened
+// and which a power cycle clears. So the scooter can be held to one value while
+// it has never been unlocked and to another once it has been.
+var CLAMP_STOCK_ADDR = 0x0801DD24;
+var CLAMP_RELOCK_ADDR = 0x0801DD20;
+
+// Native setpoint units, not km/h. 20 measures 455 rpm at the wheel; what that
+// comes out as on the road differs from scooter to scooter, which is why the
+// value is offered at all. Nothing outside this list can be selected.
+var CLAMP_VALUES = [19, 20, 21, 22];
+var CLAMP_DEFAULT = 21;
 
 function crc16Modbus(bytes) {
   var crc = 0xFFFF;
@@ -212,46 +211,194 @@ function buildHex(img) {
 // factory defaults and the optional blinker fix. Nothing here pushes values
 // between the controller and the display: the display owns the settings the way
 // it does from the factory and anything that force-fed it made the two fight.
-// SCALEGATE and KICKSTART patch the same four frame-builder sites, so they are
-// mutually exclusive and that is what separates the variants.
+// clampScale is the factor between a build's own setpoint scale and the plain
+// one, so the same selected limit means the same speed in both builds.
 var VARIANTS = {
   standard: {
     key: "standard",
     stamp: FW_BUILD,
-    groups: ["CORE", "WHEEL", "SCALEGATE", "DEFAULTS"]
-  },
-  // Same build without the scale gate, so bit5 keeps doing what it does from the
-  // factory. For controllers that read the setpoint scale the other way round and
-  // therefore get SLOWER with the standard build.
-  noscale: {
-    key: "noscale",
-    stamp: FW_BUILD_SCALE,
-    groups: ["CORE", "WHEEL", "DEFAULTS"]
+    groups: ["CORE", "WHEEL", "DEFAULTS"],
+    clampScale: 1
   },
   kickstart: {
     key: "kickstart",
     stamp: FW_BUILD_KICK,
-    groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS"]
+    groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS"],
+    clampScale: 4
   }
 };
 
-// The one firmware this patcher is approved for, as a fingerprint of the image
+// The firmwares this patcher is approved for, each as a fingerprint of the image
 // itself rather than of the file: the same firmware split into different hex
 // record lengths still passes, anything else does not.
-// The single byte CORE writes as "movs r7,#<stamp>"; it is what the scooter reports over BLE.
-var STAMP_ADDR = 0x0800C5DE;
-
-var STOCK_R5419 = {
-  version: "5.4.19",
-  first: 0x08007000,
-  last: 0x0801DAFB,
-  bytes: 92924,
-  crc: 0x3693
+//
+// site   an R5.4.19 patch address to the address of the same code in this base
+// ret    a branch target in stock code that cave code jumps back to
+// exp    the stock bytes to expect where this base encodes them differently
+// lit    a literal pool word inside a cave whose RAM address moved
+// caveShift  how far the appended caves sit from their R5.4.19 place
+//
+// Every entry was read off the two disassembly listings one by one. Where a map
+// is null the base is the one the tables are written against.
+var BASES = {
+  "5.4.19": {
+    version: "5.4.19",
+    first: 0x08007000, last: 0x0801DAFB, bytes: 92924, crc: 0x3693,
+    caveShift: 0, site: null, ret: null, lit: null
+  },
+  "5.4.21": {
+    version: "5.4.21",
+    first: 0x08007000, last: 0x0801DBDB, bytes: 93148, crc: 0x5DA5,
+    caveShift: 224,
+    site: {
+      0x08007150: 0x08007150,
+      0x0800BF5E: 0x0800BF5E,
+      0x0800C5DE: 0x0800C5DE,
+      0x0800D2C4: 0x0800D2D0,
+      0x0800D2E2: 0x0800D2EE,
+      0x0800D3B0: 0x0800D3BC,
+      0x0800D9DE: 0x0800D9EA,
+      0x0800F71C: 0x0800F7E0,
+      0x0800F8B0: 0x0800F970,
+      0x0800FCFA: 0x0800FDEC,
+      0x08010054: 0x0801013C,
+      0x08010058: 0x08010140,
+      0x08010204: 0x080102EC,
+      0x08010208: 0x080102F0,
+      0x080103AC: 0x08010512,
+      0x080103B0: 0x08010516,
+      0x080105CC: 0x080106B4,
+      0x080105D0: 0x080106B8,
+      0x0801083C: 0x080109E2,
+      0x08010B64: 0x08010C44,
+      0x0801730E: 0x080173EE,
+      0x08017C64: 0x08017D44,
+      0x08019610: 0x080196F0,
+      0x0801D78F: 0x0801D86F,
+      0x0801D792: 0x0801D872,
+      0x0801D793: 0x0801D873
+    },
+    ret: {
+      0x0800D2CA: 0x0800D2D6,
+      0x0800D2DA: 0x0800D2E6,
+      0x0800D31A: 0x0800D326,
+      0x0800D3B4: 0x0800D3C0,
+      0x0800DA48: 0x0800DA54,
+      0x0800DA64: 0x0800DA70,
+      0x0800DA66: 0x0800DA72,
+      0x0800F720: 0x0800F7E4,
+      0x0800F8B6: 0x0800F976,
+      // R5.4.21 puts a branch trampoline where R5.4.19 had the code itself; this
+      // is the address its own cbnz jumps to, so the control flow matches stock.
+      0x0800F8EE: 0x0800F9AE,
+      0x0800FD00: 0x0800FDF2,
+      0x08010840: 0x080109E6,
+      0x08010B68: 0x08010C48,
+      0x0801700C: 0x080170EC,
+      0x08017C68: 0x08017D48
+    },
+    // Five sites load a variable through a pc relative offset that R5.4.21 sizes
+    // differently, so the stock bytes to expect there are not the R5.4.19 ones.
+    // Each was checked to be the same instruction on the same register still
+    // resolving to the same variable.
+    exp: {
+      0x0800F71C: [0xD7,0x48,0x00,0x78],
+      0x0800F8B0: [0x7B,0x48,0x00,0x78,0xD8,0xB9],
+      0x0800FCFA: [0x00,0x20,0x9B,0x49,0x08,0x70],
+      0x0801083C: [0xF6,0x48,0x00,0x78],
+      0x08010B64: [0x5D,0x48,0x00,0x78]
+    },
+    lit: {
+      0x0801DB9C: 0x2000030A,
+      0x0801DC08: 0x20000305,
+      0x0801DC48: 0x20000306,
+      0x0801DC7C: 0x20000306,
+      0x0801DC80: 0x2000030A,
+      0x0801DCC8: 0x20000306,
+      0x0801DD84: 0x2000030A
+    }
+  }
 };
 
-// Reads the image and reports how it differs from the approved one. Returns
-// { ok: true, ... } or { ok: false, reason, ... } so the page can say which of
-// the four checks failed instead of a blanket refusal.
+// Thumb BL and B.W, the only wide branches the tables contain.
+function decodeWide(b, i, addr) {
+  var h1 = b[i] | (b[i + 1] << 8), h2 = b[i + 2] | (b[i + 3] << 8);
+  if ((h1 & 0xF800) !== 0xF000) return null;
+  var top = h2 & 0xD000;
+  if (top !== 0xD000 && top !== 0x9000) return null;
+  var S = (h1 >> 10) & 1, imm10 = h1 & 0x3FF;
+  var J1 = (h2 >> 13) & 1, J2 = (h2 >> 11) & 1, imm11 = h2 & 0x7FF;
+  var I1 = (~(J1 ^ S)) & 1, I2 = (~(J2 ^ S)) & 1;
+  var off = (S << 24) | (I1 << 23) | (I2 << 22) | (imm10 << 12) | (imm11 << 1);
+  if (S) off -= 1 << 25;
+  return { link: top === 0xD000, target: (addr + 4 + off) >>> 0 };
+}
+
+function encodeWide(b, i, addr, target, link) {
+  var off = target - (addr + 4);
+  if (off & 1) throw new Error("branch to an odd address");
+  if (off < -(1 << 24) || off > (1 << 24) - 2) throw new Error("branch out of range");
+  var v = off & 0x1FFFFFF;
+  var S = (v >>> 24) & 1, I1 = (v >>> 23) & 1, I2 = (v >>> 22) & 1;
+  var imm10 = (v >>> 12) & 0x3FF, imm11 = (v >>> 1) & 0x7FF;
+  var J1 = ((I1 ^ 1) ^ S) & 1, J2 = ((I2 ^ 1) ^ S) & 1;
+  var h1 = 0xF000 | (S << 10) | imm10;
+  var h2 = (link ? 0xD000 : 0x9000) | (J1 << 13) | (J2 << 11) | imm11;
+  b[i] = h1 & 0xFF; b[i + 1] = (h1 >> 8) & 0xFF;
+  b[i + 2] = h2 & 0xFF; b[i + 3] = (h2 >> 8) & 0xFF;
+}
+
+function mapSite(base, addr) {
+  if (addr >= CAVE_LO) return addr + base.caveShift;
+  if (!base.site) return addr;
+  var n = base.site[addr];
+  if (n === undefined) {
+    throw new Error("no R" + base.version + " address known for 0x" + addr.toString(16).toUpperCase());
+  }
+  return n;
+}
+
+function mapTarget(base, addr) {
+  if (addr >= CAVE_LO) return addr + base.caveShift;
+  if (!base.ret) return addr;
+  var n = base.ret[addr];
+  if (n === undefined) {
+    throw new Error("no R" + base.version + " return target known for 0x" + addr.toString(16).toUpperCase());
+  }
+  return n;
+}
+
+// Move one group's rows onto another base. Only branches that cross the cave
+// boundary need touching: a branch that stays on one side keeps its distance,
+// because everything on that side moves together.
+function translate(rows, base) {
+  if (!base.site) return rows;
+  return rows.map(function (row) {
+    var oldAddr = row[0], newAddr = mapSite(base, oldAddr);
+    var bytes = row[2].slice();
+    var srcInCave = oldAddr >= CAVE_LO;
+    for (var i = 0; i + 4 <= bytes.length; i += 2) {
+      var d = decodeWide(bytes, i, oldAddr + i);
+      if (!d) continue;
+      if ((d.target >= CAVE_LO) === srcInCave) continue;
+      encodeWide(bytes, i, newAddr + i, mapTarget(base, d.target), d.link);
+    }
+    if (base.lit) {
+      for (var key in base.lit) {
+        var at = Number(key) - oldAddr;
+        if (at < 0 || at + 4 > bytes.length) continue;
+        var w = base.lit[key];
+        bytes[at] = w & 0xFF; bytes[at + 1] = (w >> 8) & 0xFF;
+        bytes[at + 2] = (w >> 16) & 0xFF; bytes[at + 3] = (w >>> 24) & 0xFF;
+      }
+    }
+    return [newAddr, (base.exp && base.exp[oldAddr]) || row[1], bytes];
+  });
+}
+
+// Reads the image and reports how it differs from an approved one. Returns
+// { ok: true, base, ... } or { ok: false, reason, ... } so the page can say
+// which of the four checks failed instead of a blanket refusal.
 function identify(text) {
   var img;
   try {
@@ -267,11 +414,13 @@ function identify(text) {
     version: img.v0 + "." + img.v1 + "." + img.v2,
     first: lo, last: hi, bytes: bytes.length, crc: crc16Modbus(bytes)
   };
-  if (info.version !== STOCK_R5419.version) return fail("version", info);
-  if (info.first !== STOCK_R5419.first || info.last !== STOCK_R5419.last) return fail("range", info);
-  if (info.bytes !== STOCK_R5419.bytes) return fail("size", info);
-  if (info.crc !== STOCK_R5419.crc) return fail("content", info);
+  var base = BASES[info.version];
+  if (!base) return fail("version", info);
+  if (info.first !== base.first || info.last !== base.last) return fail("range", info);
+  if (info.bytes !== base.bytes) return fail("size", info);
+  if (info.crc !== base.crc) return fail("content", info);
   info.ok = true;
+  info.base = base;
   return info;
 }
 
@@ -281,42 +430,63 @@ function fail(reason, info) {
   return info;
 }
 
+function clampByte(variant, value, what) {
+  var v = Number(value);
+  if (CLAMP_VALUES.indexOf(v) < 0) {
+    throw new Error(what + " clamp must be one of " + CLAMP_VALUES.join(", ") + ", not " + value);
+  }
+  var b = v * variant.clampScale;
+  if (b > 0xFF) throw new Error(what + " clamp " + v + " does not fit in a single byte");
+  return b;
+}
+
 function build(text, variantKey, opts) {
   opts = opts || {};
   var v = VARIANTS[variantKey];
   if (!v) throw new Error("unknown variant " + variantKey);
   if (v.stamp > 0xFF) throw new Error("version stamp " + v.stamp + " does not fit in the single BLE version byte");
 
+  var stockClamp = clampByte(v, opts.clampStock === undefined ? CLAMP_DEFAULT : opts.clampStock, "stock");
+  var relockClamp = clampByte(v, opts.clampRelock === undefined ? CLAMP_DEFAULT : opts.clampRelock, "relock");
+
   // Blinker sits right behind the wheel fix, the order the firmware releases use.
   var groups = v.groups.slice();
   if (opts.blinker) groups.splice(groups.indexOf("WHEEL") + 1, 0, "BLINKER");
 
   var id = identify(text);
-  if (!id.ok) throw new Error("this firmware is not the approved R5.4.19 stock image (" + id.reason + ")");
+  if (!id.ok) throw new Error("this firmware is not an approved stock image (" + id.reason + ")");
+  var base = id.base;
 
   var img = fromHex(text);
   var before = img.mem.size;
   for (var i = 0; i < groups.length; i++) {
     var rows = PATCHES[groups[i]];
     if (!rows) throw new Error("unknown patch group " + groups[i]);
-    applyGroup(img, rows, groups[i].toLowerCase());
+    applyGroup(img, translate(rows, base), groups[i].toLowerCase());
   }
   // CORE leaves the reported version byte at the standard number; every variant
   // stamps its own here, so the number the scooter reports names the build exactly.
-  img.mem.set(STAMP_ADDR, v.stamp);
+  img.mem.set(mapSite(base, STAMP_ADDR), v.stamp);
+  img.mem.set(mapSite(base, CLAMP_STOCK_ADDR), stockClamp);
+  img.mem.set(mapSite(base, CLAMP_RELOCK_ADDR), relockClamp);
 
   var res = buildHex(img);
   res.variant = v;
+  res.base = base;
   res.groups = groups;
+  res.clampStock = Number(opts.clampStock === undefined ? CLAMP_DEFAULT : opts.clampStock);
+  res.clampRelock = Number(opts.clampRelock === undefined ? CLAMP_DEFAULT : opts.clampRelock);
   res.grewBy = img.mem.size - before;
   return res;
 }
 
 // Usable both in the page (window) and in a plain node check, so the
 // verification runs the very same code the page runs.
-var API = { FW_BUILD: FW_BUILD, FW_BUILD_SCALE: FW_BUILD_SCALE, FW_BUILD_KICK: FW_BUILD_KICK, fromHex: fromHex, applyGroup: applyGroup,
+var API = { FW_BUILD: FW_BUILD, FW_BUILD_KICK: FW_BUILD_KICK, fromHex: fromHex, applyGroup: applyGroup,
             buildHex: buildHex, crc16Modbus: crc16Modbus, build: build, VARIANTS: VARIANTS,
-            identify: identify, STOCK_R5419: STOCK_R5419 };
+            identify: identify, BASES: BASES, PATCHES: PATCHES, translate: translate,
+            decodeWide: decodeWide, encodeWide: encodeWide,
+            CLAMP_VALUES: CLAMP_VALUES, CLAMP_DEFAULT: CLAMP_DEFAULT, CAVE_LO: CAVE_LO };
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = API;

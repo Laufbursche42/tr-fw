@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v31";
+var BUILD = "v32";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -43,6 +43,7 @@ function applyLang() {
   document.getElementById("trademarksLink").href = docFile("TRADEMARKS");
   document.getElementById("docX").setAttribute("aria-label", t("docClose"));
   renderVariantOptions();
+  renderClampOptions();
   renderFeatures();
 
   var btns = document.querySelectorAll(".langs button");
@@ -64,13 +65,28 @@ applyLang();
   });
 }
 
-// The three builds, in the order they are offered. Everything about a build that the
-// page shows is looked up from here, so adding a fourth is one row.
+// The builds, in the order they are offered. Everything about a build that the
+// page shows is looked up from here, so adding a third is one row.
 var BUILDS = [
-  { key: "standard",  title: "varStdTitle",   when: "varStdWhen",   extra: "featStdExtra",   stamp: "FW_BUILD" },
-  { key: "noscale",   title: "varScaleTitle", when: "varScaleWhen", extra: "featScaleExtra", stamp: "FW_BUILD_SCALE" },
-  { key: "kickstart", title: "varKickTitle",  when: "varKickWhen",  extra: "featKickExtra",  stamp: "FW_BUILD_KICK" }
+  { key: "standard",  title: "varStdTitle",  when: "varStdWhen",  extra: "featStdExtra",  stamp: "FW_BUILD" },
+  { key: "kickstart", title: "varKickTitle", when: "varKickWhen", extra: "featKickExtra", stamp: "FW_BUILD_KICK" }
 ];
+
+// The two locked clamps. Both lists hold the same values, so the only thing that
+// can be picked is a number the firmware is known to accept.
+function renderClampOptions() {
+  ["clampStock", "clampRelock"].forEach(function (id) {
+    var sel = document.getElementById(id);
+    var keep = sel.value;
+    sel.textContent = "";
+    window.OTA.CLAMP_VALUES.forEach(function (v) {
+      var o = el("option", null, String(v));
+      o.value = String(v);
+      sel.appendChild(o);
+    });
+    sel.value = keep || String(window.OTA.CLAMP_DEFAULT);
+  });
+}
 
 // Option labels carry the version number, so the list itself says which build is which.
 function renderVariantOptions() {
@@ -151,7 +167,9 @@ function showResult(res) {
 
   var dl = el("dl", "facts");
   [[t("fSource"), loaded.name],
+   [t("fBase"), "R" + res.base.version],
    [t("fVersion"), "V" + res.variant.stamp],
+   [t("fClamp"), res.clampStock + " / " + res.clampRelock],
    [t("fBytes"), res.appBytes.toLocaleString(lang)],
    [t("fCrc"), res.crc.toString(16).toUpperCase().padStart(4, "0")],
    [t("fGroups"), res.groups.join(", ").toLowerCase()]].forEach(function (row) {
@@ -160,7 +178,9 @@ function showResult(res) {
   });
   box.appendChild(dl);
 
-  var name = "AWIVCU_APP_R5_4_19_V" + res.variant.stamp + ".hex";
+  // The base version belongs in the file name: the same build number exists for
+  // both. Flashing the one for the other version bricks the scooter.
+  var name = "AWIVCU_APP_R" + res.base.version.replace(/\./g, "_") + "_V" + res.variant.stamp + ".hex";
   var a = el("a", "get", t("download") + "  (" + name + ")");
   a.href = URL.createObjectURL(new Blob([res.text], { type: "text/plain" }));
   a.download = name;
@@ -174,7 +194,7 @@ function showResult(res) {
 function showVerdict(id, name) {
   var box = el("div", "verdict" + (id.ok ? "" : " bad"));
   var key = id.ok ? "okStock" : "bad" + id.reason.charAt(0).toUpperCase() + id.reason.slice(1);
-  box.appendChild(el("b", null, t(key)));
+  box.appendChild(el("b", null, t(key).replace("{v}", id.version || "")));
   if (id.reason !== "unreadable") {
     box.appendChild(el("span", "detail", name + "   v" + id.version + "   " + id.bytes
       + " B   CRC " + id.crc.toString(16).toUpperCase().padStart(4, "0")));
@@ -221,7 +241,9 @@ drop.addEventListener("drop", function (e) {
 function doBuild() {
   try {
     var res = window.build(loaded.text, selectedVariant(), {
-      blinker: document.getElementById("blinker").checked
+      blinker: document.getElementById("blinker").checked,
+      clampStock: Number(document.getElementById("clampStock").value),
+      clampRelock: Number(document.getElementById("clampRelock").value)
     });
     showResult(res);
   } catch (e) {

@@ -18,38 +18,41 @@ You supply the stock image from your own scooter, the page applies the patch set
 
 ## What it builds
 
-Three builds that exclude each other, because all three decide the same instruction in the four controller frame builders:
+Two builds that exclude each other, because both decide the same instruction in the four controller frame builders:
 
-- **V44** the normal case.
-- **V144** for controllers that read the setpoint scale the other way round and therefore get slower with V44 instead of faster.
-- **V244** for older controllers that cannot switch their zero start off. On any other controller this one leaves the throttle dead.
+- **V45** the normal case. It leaves the setpoint scale bit the way the controller gets it from the factory.
+- **V245** for older controllers that cannot switch their zero start off. On any other controller this one leaves the throttle dead.
+
+Both let you pick the speed the scooter is clamped to while it is locked, as two separate numbers out of `19`, `20`, `21` and `22`: one that applies while the scooter has not been unlocked since it was switched on, one that applies after it has been unlocked and locked again. These are the firmware's own setpoint units, not km/h. `20` is the value every build so far shipped and measures 455 rpm at the wheel; what that turns into on the road depends on the scooter, which is why it can be set.
 
 What they contain and what changed is in the changelog: [German](CHANGELOG.de.md), [English](CHANGELOG.en.md).
 
 ## What it accepts
 
-Only the stock **R5.4.19**. The check runs on the content of the image, not on the file name, so a differently formatted hex of the same firmware still passes:
+The stock **R5.4.19** and the stock **R5.4.21**. The check runs on the content of the image, not on the file name, so a differently formatted hex of the same firmware still passes:
 
 ```
-trailer version   5.4.19
-address range     0x08007000 to 0x0801DAFB
-size              92924 bytes
-CRC-16/MODBUS     0x3693
+trailer version   5.4.19                        5.4.21
+address range     0x08007000 to 0x0801DAFB      0x08007000 to 0x0801DBDB
+size              92924 bytes                   93148 bytes
+CRC-16/MODBUS     0x3693                        0x5DA5
 ```
 
 Anything else is refused with the reason: an Ali image, another stock version, an already patched file. The check sits in the patcher itself, not only in the page, so it cannot be clicked away.
+
+The built file is named after the stock version it was made from, `AWIVCU_APP_R5_4_19_V45.hex` or `AWIVCU_APP_R5_4_21_V45.hex`. Flash only the one that matches the version on your scooter.
 
 ## Before you flash
 
 Use at your own risk. The warnings are shown when you build.
 
 - **Fighter Mini Pro eKFV only.** The firmwares built with the Laufbursche Firmware Patcher are for the Teverun Fighter Mini Pro eKFV. The hardware is a Box C / IVCU-V5.X board (shared with the Blade GT II, Fighter 11 and Supreme+), but those models run their own firmware - do NOT flash these on them or on a Box A (HW V3.X), Box B (V4.X) or a C1 / C2 board.
-- **A failed flash is almost always recoverable.** The bootloader clears its "app valid" flag before it writes and restores it only after the new image passes its checksum, so a bad, interrupted, cancelled or power-lost flash leaves the IVCU back in the bootloader - still in flashing mode, surviving a power-off and a Bluetooth disconnect - and you just flash again. The stock **R5.4.19** is your recovery firmware. This is not a guarantee - flashing always carries some risk (a wrong-but-checksum-valid image can still boot broken). See [why an interrupted flash is almost never a brick](#why-an-interrupted-flash-is-almost-never-a-brick) for the code proof.
+- **A failed flash is almost always recoverable.** The bootloader clears its "app valid" flag before it writes and restores it only after the new image passes its checksum, so a bad, interrupted, cancelled or power-lost flash leaves the IVCU back in the bootloader - still in flashing mode, surviving a power-off and a Bluetooth disconnect - and you just flash again. The stock image **for the version your own scooter runs**, R5.4.19 or R5.4.21, is your recovery firmware; the other one is not. This is not a guarantee - flashing always carries some risk (a wrong-but-checksum-valid image can still boot broken). See [why an interrupted flash is almost never a brick](#why-an-interrupted-flash-is-almost-never-a-brick) for the code proof.
 - **It takes about 13 minutes.** Keep whatever does the flashing open and in the foreground for the whole run. The scooter has to stay switched on and within range.
 - **Set the scooter Auto-Off to 30 min first.** Because the flash takes ~13 minutes, set the auto-off timer to 30 minutes (or Off) in the scooter's own display menu before you start. The app cannot change it - a shorter timer powers the scooter off mid-flash.
 - **Reset the display wheel to 10 first.** If you ever changed the wheel size in the scooter's own display menu (P-settings) to anything other than 10, set it back to 10 there before you flash. This firmware never changes the display's stored wheel, so the display keeps showing that number - and a roadside check reads the wheel there. You set your real wheel size in the app instead: it applies only while unlocked and is forced back to 10 when you lock, so the display always reads 10.
 - **Road approval.** Flashing non-stock firmware or unlocking the speed changes the approved configuration, with the road-approval and insurance consequences in the [Disclaimer](#disclaimer). The responsibility is yours.
-- **First time? Do a dry run** by flashing the unmodified stock R5.4.19 once, so you have seen the whole flow before you change anything.
+- **First time? Do a dry run** by flashing your own unmodified stock image once, so you have seen the whole flow before you change anything.
 
 ## Firmware (reverse engineering)
 
@@ -87,19 +90,23 @@ There is NO no-flash unlock for Gate 2 on this firmware. A magic word (`0xAA55AA
 
 Patching the display is one option; the other is to patch the VCU application firmware, which defeats both gates at once. Each of the four motor-command frame builders clamps the setpoint with a `movs r7, #0x16` that runs after a compare. Replacing those four instructions with NOPs removes the clamp, but only the clamp: the `orr r6, r6, #0x20` right before it stays, so the controller keeps being told the restricted setpoint scale and the scooter can end up slower rather than faster. Clamp and scale bit belong to the same branch and have to be handled together.
 
-This NOP-the-clamp route drops the cap unconditionally. The [Laufbursche Firmware Patcher](https://laufbursche42.github.io/tr-fw/) instead redirects the four clamp sites to a small appended routine that reads a RAM lock flag at `0x20001B40`. Any non-zero value means open and the per-gear setpoint passes untouched; zero means locked and the routine caps the setpoint. V44 and V144 cap it at `0x14`, V244 caps at `0x50` and halves the result, which is why its locked speed follows the gear. Measured at the wheel the locked value is around 455 rpm.
+This NOP-the-clamp route drops the cap unconditionally. The [Laufbursche Firmware Patcher](https://laufbursche42.github.io/tr-fw/) instead redirects the four clamp sites to a small appended routine that reads a RAM lock flag at `0x20001B40`. Any non-zero value means open and the per-gear setpoint passes untouched; zero means locked and the routine caps the setpoint.
 
-The same routine decides bit5, the scale the controller reads the setpoint on. V44 lets it follow the lock, V144 leaves the stock instruction in place and V244 clears it always. That flag is toggled live over Bluetooth with the direct lock command (cmd 0x1B), so one and the same firmware boots locked and unlocks or re-locks on demand with no re-flash and no FIN rename.
+The cap itself is not one number. The same routine sets a second RAM byte, `0x20001B41`, the first time the lock is opened after a power cycle. It reads that byte to choose between two caps: one for a scooter that has not been unlocked since it was switched on, one for a scooter that has. Both are chosen when the firmware is built, out of `0x13`, `0x14`, `0x15` and `0x16`. `0x14` measures around 455 rpm at the wheel. V245 clears bit5 rather than setting it and therefore reads the setpoint on the doubled scale, so it carries the same two caps multiplied by four and halves the result again after clamping.
 
-The clamp is unique to the R5 line: the four `movs r7, #0x16` caps appear in R5.4.19 but are absent from the R3, R2 and D-series VCU images, which ship unrestricted. Because the R3 and R5 images share the same Box C flash base (`0x08007000`) and the same MCU and peripheral map, flashing an unpatched open R3-line image onto an R5 VCU de-restricts it with no byte patch at all - the version number is only a client-side software lock (the original app's name gate just wants a version segment ending in "5"), not a hardware difference. The stock R5.4.19 stays the recovery image to return to.
+Bit5, the scale the controller reads the setpoint on, is left the way the factory instruction sets it in V45 and cleared always in V245. The lock flag itself is toggled live over Bluetooth with the direct lock command (cmd 0x1B), so one and the same firmware boots locked and unlocks or re-locks on demand with no re-flash and no FIN rename.
+
+The clamp is unique to the R5 line: the four `movs r7, #0x16` caps appear in R5.4.19 but are absent from the R3, R2 and D-series VCU images, which ship unrestricted. Because the R3 and R5 images share the same Box C flash base (`0x08007000`) and the same MCU and peripheral map, flashing an unpatched open R3-line image onto an R5 VCU de-restricts it with no byte patch at all - the version number is only a client-side software lock: the name gate in the usual tooling just wants a version segment ending in "5", not a hardware difference. Your own stock image stays the recovery image to return to.
 
 A patched image needs its CRC-16/MODBUS recomputed and its `:07AAA555` trailer record rebuilt. The bootloader checks only the CRC and the address range - there is no signature - so a correctly re-checksummed patched image is accepted.
 
-Important caveat: these offsets are for the R5.4.19 image. A unit running R5.4.21 has different offsets and no 5.4.21 image is available, so patching a 5.4.21 unit requires re-locating the four clamps in the correct image first. There is also a recovery risk: flashing is one-way because the firmware cannot be read back over BLE (see the next subsection), so a known-good image for the exact version on the scooter is the only safety net before any flash.
+The offsets quoted above are the R5.4.19 ones. R5.4.21 carries the same code at different addresses and the shift is not a single offset: it runs from 0 bytes in the low flash region through 12, 192, 196, 224, 232 and 242 up to 422 bytes at the frame builders. A handful of RAM variables move by two or four bytes with it. The patcher therefore holds a per-address map for R5.4.21 rather than a formula, re-encodes every branch that crosses between stock code and the appended routines and rewrites the literal pool words whose variables moved. Five sites also load their variable through a pc relative offset that R5.4.21 sizes differently, so the stock bytes it expects there differ while resolving to the same variable.
+
+There is still a recovery risk: flashing is one-way because the firmware cannot be read back over BLE (see the next subsection), so a known-good image for the exact version on the scooter is the only safety net before any flash. The build carries its stock version in the file name for that reason.
 
 ### The live speed lock
 
-Every patched R5.4.19 build boots LOCKED at 22 km/h. To unlock or re-lock the speed live over Bluetooth - with no re-flash - triple-tap the VCU speed tile on the main screen. This sends the direct lock command (cmd 0x1B); it is not a FIN rename and needs no display step. The tile colour shows the current state, read straight from the scooter's telemetry (`55 71`). Unlocking lifts the 22 km/h cap, brings your stored cruise mode back and lets the app's Wheel size drive the speedometer; locking caps you back at 22, turns cruise off and forces the stock 10.0" wheel on the display for a correct legal speed reading. The unlock holds while the scooter stays on and every restart comes up locked again. Every step is reversible.
+Every patched build boots LOCKED, at whichever of the two caps was chosen for a scooter that has not been unlocked yet. To unlock or re-lock the speed live over Bluetooth - with no re-flash - triple-tap the VCU speed tile on the main screen. This sends the direct lock command (cmd 0x1B); it is not a FIN rename and needs no display step. The tile colour shows the current state, read straight from the scooter's telemetry (`55 71`). Unlocking lifts the cap, brings your stored cruise mode back and lets the app's Wheel size drive the speedometer; locking caps you again, turns cruise off and forces the stock 10.0" wheel on the display for a correct legal speed reading. The cap after a re-lock is the second of the two values, which is the one to set if your scooter runs hotter once it has been open. The unlock holds while the scooter stays on and every restart comes up locked again. Every step is reversible.
 
 ### VCU bootloader OTA and firmware read-back
 
@@ -120,7 +127,7 @@ Everything hangs on an "app valid" magic word `0x5A5A5A5A` in a flash flag page 
 
 So any interruption between INFO and a good FINISH - power loss, Bluetooth or CAN drop, cancel, a brown-out mid-write - leaves the magic erased and the next boot stays in the bootloader, re-flashable. The flag is in flash so it survives a power-off; the bootloader just idles for the next frame so it survives a Bluetooth disconnect.
 
-It is "almost never", not "never". Integrity is a **CRC-16 (poly `0x8005`) only, no signature** (`0x08005AE4`), so a wrong-but-CRC-valid image passes FINISH and the box boots a broken app; re-entry is a normal command rather than a race: the running application programs the `0xA5A5A5A5` enter-update request itself (`0x08016EF2`, reached from the OTA handler at `0x0801A572`) and resets into the bootloader, so a box that still runs its application can always be sent back into update mode; a box whose application no longer starts leaves only the power-on window, otherwise SWD / JTAG. And external corruption of the bootloader pages (a flash-cell failure or an SWD mishap) is not OTA-recoverable. Keep the stock R5.4.19 as the recovery image.
+It is "almost never", not "never". Integrity is a **CRC-16 (poly `0x8005`) only, no signature** (`0x08005AE4`), so a wrong-but-CRC-valid image passes FINISH and the box boots a broken app; re-entry is a normal command rather than a race: the running application programs the `0xA5A5A5A5` enter-update request itself (`0x08016EF2`, reached from the OTA handler at `0x0801A572`) and resets into the bootloader, so a box that still runs its application can always be sent back into update mode; a box whose application no longer starts leaves only the power-on window, otherwise SWD / JTAG. And external corruption of the bootloader pages (a flash-cell failure or an SWD mishap) is not OTA-recoverable. Keep the stock image matching your scooter's version as the recovery image.
 
 ### Display firmware flashing
 
@@ -162,7 +169,7 @@ The speed cap and the cruise lock are direct eKFV region protections latched by 
 
 ### Sleep and power-off timer quirk
 
-The sleep timer and the power-off timer are neither readable nor writable over BLE on this VCU, because of a firmware bug rather than a region lock. The `55 71` settings-echo frame builder copies only 16 payload bytes, so byte `t[18]` - which is supposed to carry the sleep timer and power-off timer - is never written; in the stock image the loop that should fill it is dead code. In a build those bytes carry the lock state instead. Either way `t[18]` stays empty. The inbound settings-write path drops the same byte. As a result those two timers live only in the VCU EEPROM config and can only be set from the scooter's on-display P-menu. The official app hides this by showing its own cached value; Laufbursche Edition therefore does not expose these two timers at all.
+The sleep timer and the power-off timer are neither readable nor writable over BLE on this VCU, because of a firmware bug rather than a region lock. The `55 71` settings-echo frame builder copies only 16 payload bytes, so byte `t[18]` - which is supposed to carry the sleep timer and power-off timer - is never written; in the stock image the loop that should fill it is dead code. In a build those bytes carry the lock state instead. Either way `t[18]` stays empty. The inbound settings-write path drops the same byte. As a result those two timers live only in the VCU EEPROM config and can only be set from the scooter's on-display P-menu. Tooling that shows a value for them is showing its own cache; Laufbursche Edition therefore does not expose these two timers at all.
 
 ### Inter-MCU transport map
 
@@ -176,10 +183,6 @@ The controllers on this platform are wired as follows:
 | CAN | the BMS / battery bus |
 
 The display is UART-connected, not on CAN. This is why a display firmware update cannot be relayed through the VCU over BLE - there is no path from the phone link to the display line inside the VCU app - and why reaching the display needs a direct UART connection.
-
-### Original Teverun app behaviour
-
-A few behaviours of the official Teverun app explain why this app is built differently. The official app persists the whole settings state to disk per device, rewrites it on every change and has no targeted single-field write: any user action re-sends all five gear profiles from that (partially stale) cache, which can silently overwrite per-gear values the rider had set. That is the origin of the common complaint that "the app changed my settings". It also carries hardcoded per-model default tables. Laufbursche Edition avoids this by using an explicit Save, targeted per-gear writes and no persistence of VCU values on the phone.
 
 ### Chip and hardware access
 

@@ -10,12 +10,12 @@ window.I18N = {
 
     s1: "Firmware-Upload",
     dropTitle: "Hex-Datei hierher ziehen oder klicken",
-    dropSub: "Teverun IVCU R5.4.19 als .hex oder .txt",
+    dropSub: "Teverun IVCU R5.4.19 oder R5.4.21 als .hex oder .txt",
     iosHint: "<b>Auf dem iPhone:</b> lässt sich deine Datei in der Auswahl nicht antippen, benenn sie in <b>.txt</b> um. Am Inhalt ändert das nichts und die Seite liest ihn genauso, denn geprüft wird das Abbild selbst, nie der Dateiname.",
-    uploadHint: "Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware R5.4.19 findest du im Internet, zum Beispiel <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine neuere Firmware, öffne bitte ein <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.",
-    okStock: "Serien-Firmware R5.4.19 erkannt.",
+    uploadHint: "Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware findest du im Internet, zum Beispiel <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine Firmware, die hier noch nicht angenommen wird, öffne bitte ein <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.",
+    okStock: "Serien-Firmware R{v} erkannt.",
     badUnreadable: "Das ist keine lesbare Hex-Datei.",
-    badVersion: "Falsche Firmware. Freigegeben ist nur R5.4.19.",
+    badVersion: "Falsche Firmware. Freigegeben sind R5.4.19 und R5.4.21.",
     badRange: "Das ist keine unveränderte Serien-Firmware, sie sieht nach einer bereits gepatchten Datei aus.",
     badSize: "Die Datei hat nicht die Größe der Serien-Firmware.",
     badContent: "Die Version stimmt, der Inhalt nicht. Die Datei wurde verändert.",
@@ -23,37 +23,39 @@ window.I18N = {
     s2: "Controller",
     varHelp: "Welche Version passt zu dir?",
     varStdWhen: "<b>Standard:</b> der Normalfall, nimm diese Version, wenn du noch nicht abschätzen kannst, welche der Punkte für deinen Scooter zutrifft. Sollte beim Patchen etwas schief gehen, keine Panik, einfach eine andere Version auswählen und erneut flashen.",
-    varScaleWhen: "<b>Andere Skala:</b> nimm diese Version, wenn dein Roller mit der Standardversion Probleme gemacht hat und entsperrt bei etwa 15 km/h hängenbleibt.",
     varKickWhen: "<b>Ältere Controller:</b> wenn dein Roller ab Werk nicht ohne Antreten anfährt bzw. du Kickstart nicht deaktivieren kannst. Bei allen anderen führt diese Version dazu, dass der Scooter kein Gas mehr annimmt.",
     varPick: "Version",
     varStdTitle: "Standard",
-    varScaleTitle: "Andere Skala",
     varKickTitle: "Ältere Controller",
 
     featTitle: "Was drin ist",
     featCommon: [
       "Geschwindigkeitssperre, über Bluetooth ein- und ausschaltbar, der Roller startet gesperrt",
-      "gesperrt auf einen festen Wert geklemmt, am Rad gemessene 455 U/min",
+      "gesperrt auf den Wert geklemmt, den du in Schritt 03 einstellst",
       "Tempomat freigegeben, geschaltet wird er wie gewohnt im Display-Menü",
       "Radgröße bleibt über den Neustart gespeichert und wirkt auf den Tacho, gesperrt zeigt das Display 10,0 Zoll",
       "Werksvorgaben auf 10 Zoll und 52 V korrigiert"
     ],
     featStdExtra: [
-      "Sollwert und Skala passen zusammen, entsperrt liegt die volle Leistung an"
-    ],
-    featScaleExtra: [
-      "Die Skala bleibt so, wie der Controller sie ab Werk bekommt, sonst ist alles wie in der Standardfassung"
+      "Die Skala bleibt so, wie der Controller sie ab Werk bekommt"
     ],
     featKickExtra: [
       "Anfahren ohne Antreten fest eingeschaltet",
-      "gesperrt gilt statt der festen Klemme der begrenzte und halbierte Sollwert, die gesperrte Geschwindigkeit folgt damit dem Gang"
+      "gesperrt gilt derselbe eingestellte Wert, umgerechnet auf die Skala dieser Version"
     ],
     detailsNote: "Was sich gegenüber der letzten Version geändert hat, steht im <a id=\"detailsLink\" href=\"CHANGELOG.de.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog für Firmware</a>.",
-    s3: "Optionen",
+
+    s3: "Gesperrte Geschwindigkeit",
+    clampHelp: "Worauf soll der Roller geklemmt werden, solange er gesperrt ist?",
+    clampStockLabel: "Seit dem Einschalten nie entsperrt",
+    clampRelockLabel: "Nach Entsperren und wieder Sperren",
+    clampNote: "Das sind die Werte, mit denen die Firmware selbst rechnet, keine km/h. Bisher stand hier fest die 20, gemessen 455 U/min am Rad. Was daraus auf der Straße wird, hängt an Reifen, Gewicht und eingestellter Radgröße. Derselbe Wert ergibt deshalb nicht auf jedem Roller dieselbe Geschwindigkeit: mit einer eingestellten 22 läuft der eine gesperrt über die erlaubten 22 km/h, der nächste bleibt darunter. Vorhersagen lässt sich das nicht, es hilft nur nachmessen. Ein höherer Wert macht schneller, ein niedrigerer langsamer. Zwei Felder gibt es, weil der Controller nach einem Entsperren bis zum nächsten Ausschalten oft etwas höher klemmt als beim Losfahren.",
+
+    s4: "Optionen",
     blinkerTitle: "Blinker-Fix",
     blinkerText: "Nur wichtig, wenn dein Blinker dauerhaft leuchtet statt zu blinken. In der Regel passiert das nur bei Scootern, bei denen keine Blinkerbox verbaut ist.",
 
-    s4: "Bauen",
+    s5: "Bauen",
     lockNote: "<b>Die Sperre lässt sich nur mit einer App ein- und ausschalten, die das unterstützt.</b> Ohne eine solche App bleibt der Roller gesperrt, auch mit dieser Firmware.",
     buildBtn: "Firmware bauen",
 
@@ -76,6 +78,8 @@ window.I18N = {
 
     okTitle: "Fertig",
     fSource: "Grundlage",
+    fBase: "Serienstand",
+    fClamp: "Klemme gesperrt / nach Entsperren",
     fVersion: "Meldet sich als",
     fBytes: "App-Bytes",
     fCrc: "CRC-16",
@@ -104,12 +108,12 @@ window.I18N = {
 
     s1: "Firmware upload",
     dropTitle: "Drop a .hex here or click to choose",
-    dropSub: "Teverun IVCU R5.4.19 as .hex or .txt",
+    dropSub: "Teverun IVCU R5.4.19 or R5.4.21 as .hex or .txt",
     iosHint: "<b>On an iPhone:</b> if your file cannot be tapped in the picker, rename it to <b>.txt</b>. That changes nothing about the content and the page reads it just the same, because what is checked is the image itself, never the file name.",
-    uploadHint: "This page ships no firmware. You can get the matching IVCU firmware R5.4.19 online, for example <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">here</a>. Your dealer can send it to you as well. If you have a newer firmware, please open a <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">ticket</a> and attach it there, then we will build our patches for that one too.",
-    okStock: "Stock firmware R5.4.19 recognised.",
+    uploadHint: "This page ships no firmware. You can get the matching IVCU firmware online, for example <a href=\"https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware\" target=\"_blank\" rel=\"noopener\">here</a>. Your dealer can send it to you as well. If you have a firmware this page does not accept yet, please open a <a href=\"https://github.com/Laufbursche42/tr-fw/issues\" target=\"_blank\" rel=\"noopener\">ticket</a> and attach it there, then we will build our patches for that one too.",
+    okStock: "Stock firmware R{v} recognised.",
     badUnreadable: "That is not a readable hex file.",
-    badVersion: "Wrong firmware. Only R5.4.19 is approved.",
+    badVersion: "Wrong firmware. Only R5.4.19 and R5.4.21 are approved.",
     badRange: "This is not an untouched stock firmware, it looks like an already patched file.",
     badSize: "The file does not have the size of the stock firmware.",
     badContent: "The version matches but the content does not. The file has been altered.",
@@ -117,37 +121,39 @@ window.I18N = {
     s2: "Controller",
     varHelp: "Which build fits you?",
     varStdWhen: "<b>Standard:</b> the normal case, take this build if you cannot tell yet which of the points applies to your scooter. Should something go wrong while patching, no panic, just pick another build and flash again.",
-    varScaleWhen: "<b>Other scale:</b> take this build if your scooter gave you trouble with the standard build and gets stuck at about 15 km/h unlocked.",
     varKickWhen: "<b>Older controllers:</b> if your scooter does not pull away without a kick from the factory, meaning you cannot switch the kickstart off. On every other scooter this build makes the throttle stop responding.",
     varPick: "Build",
     varStdTitle: "Standard",
-    varScaleTitle: "Other scale",
     varKickTitle: "Older controllers",
 
     featTitle: "What it contains",
     featCommon: [
       "speed lock, switched on and off over Bluetooth, the scooter boots locked",
-      "locked speed clamped to a fixed value, a measured 455 rpm at the wheel",
+      "locked speed clamped to the value you set in step 03",
       "cruise control released, switched in the display menu as usual",
       "wheel size stays stored across a restart and feeds the speedometer, the display shows 10.0 inch while locked",
       "factory defaults corrected to 10 inch and 52 V"
     ],
     featStdExtra: [
-      "setpoint and scale match up, full power when unlocked"
-    ],
-    featScaleExtra: [
-      "the scale stays the way the controller gets it from the factory, everything else is as in the standard build"
+      "the scale stays the way the controller gets it from the factory"
     ],
     featKickExtra: [
       "zero start permanently on",
-      "while locked the capped and halved setpoint applies instead of the fixed clamp, so the locked speed follows the gear"
+      "while locked the same value you set applies, converted to the scale this build uses"
     ],
     detailsNote: "What changed against the previous build is in the <a id=\"detailsLink\" href=\"CHANGELOG.en.md\" data-doc=\"CHANGELOG\" data-doc-title=\"changelog\">Changelog for Firmware</a>.",
-    s3: "Options",
+
+    s3: "Locked speed",
+    clampHelp: "What should the scooter be clamped to while it is locked?",
+    clampStockLabel: "Never unlocked since power on",
+    clampRelockLabel: "After unlocking and locking again",
+    clampNote: "These are the numbers the firmware itself works with, not km/h. Until now this was fixed at 20, a measured 455 rpm at the wheel. What that comes out as on the road depends on tyres, weight and the wheel size you set. The same value therefore does not come out as the same speed on every scooter: with 22 set, one runs past the 22 km/h it is allowed while the next stays under. There is no telling in advance, only measuring. A higher number is faster, a lower one slower. There are two fields because after an unlock the controller often clamps a little higher than it did from a cold start, until the next power off.",
+
+    s4: "Options",
     blinkerTitle: "Blinker fix",
     blinkerText: "Only relevant if your indicator lights up continuously instead of blinking. As a rule that happens only on scooters with no blinker box fitted.",
 
-    s4: "Build",
+    s5: "Build",
     lockNote: "<b>The lock can only be switched on and off with an app that supports it.</b> Without such an app the scooter stays locked, even with this firmware.",
     buildBtn: "Build firmware",
 
@@ -170,6 +176,8 @@ window.I18N = {
 
     okTitle: "Done",
     fSource: "Based on",
+    fBase: "Stock version",
+    fClamp: "Clamp locked / after unlock",
     fVersion: "Reports as",
     fBytes: "App bytes",
     fCrc: "CRC-16",

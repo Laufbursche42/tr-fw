@@ -48,7 +48,7 @@ Use at your own risk. The warnings are shown when you build.
 - **It takes about 13 minutes.** Keep whatever does the flashing open and in the foreground for the whole run. The scooter has to stay switched on and within range.
 - **Set the scooter Auto-Off to 30 min first.** Because the flash takes ~13 minutes, set the auto-off timer to 30 minutes (or Off) in the scooter's own display menu before you start. The app cannot change it - a shorter timer powers the scooter off mid-flash.
 - **Reset the display wheel to 10 first.** If you ever changed the wheel size in the scooter's own display menu (P-settings) to anything other than 10, set it back to 10 there before you flash. This firmware never changes the display's stored wheel, so the display keeps showing that number - and a roadside check reads the wheel there. You set your real wheel size in the app instead: it applies only while unlocked and is forced back to 10 when you lock, so the display always reads 10.
-- **Road approval.** Flashing non-stock firmware or unlocking the speed changes the approved configuration, with the road-approval and insurance consequences in the [Legal and safety](#legal-and-safety) note. The responsibility is yours.
+- **Road approval.** Flashing non-stock firmware or unlocking the speed changes the approved configuration, with the road-approval and insurance consequences in the [Disclaimer](#disclaimer). The responsibility is yours.
 - **First time? Do a dry run** by flashing the unmodified stock R5.4.19 once, so you have seen the whole flow before you change anything.
 
 ## Firmware (reverse engineering)
@@ -185,15 +185,13 @@ A few behaviours of the official Teverun app explain why this app is built diffe
 
 The VCU carries an ARM Cortex-M4F on an STM32F1-style peripheral map, so a GD32F303-class part rather than the F103 it looks like at first glance. The image enables the FPU, uses VFP instructions and sets a flash latency an F103 does not offer. The SWD pads are the standard SWDIO / SWCLK pair. Reading the RDP / option-byte state over SWD is non-destructive - you can check whether the flash is readable without erasing it - which is the safe first step before considering any hardware dump. Actually reading the firmware out (for a backup) requires this SWD access; it cannot be done over BLE.
 
-### Legal and safety
-
-Removing the 22 km/h limit takes the scooter out of its eKFV road approval (ABE) and voids its insurance, so any de-restriction is for private-ground or research use only. This section explains what this page builds and where the findings behind it come from; it is not a how-to endorsement for public-road use. On a public road the scooter must keep its approved configuration.
-
 ## Disclaimer
 
 **Feasibility study, no warranty.** This patcher is a feasibility study. What it builds is provided "as is". Nothing here promises that a build is free of defects, that it suits your scooter, that a value it reports is correct or that it still behaves the same after the next controller or display revision. The measurements quoted come from a small number of machines, in places from a single one. Where that is the case it is marked.
 
-**At your own risk.** You build and flash at your own risk. As far as the law allows, the developer is not liable for damage to the scooter, its controller, its battery or any other part, for lost data, for injury or for any other loss that comes out of using this page or the firmware it builds. Flashing can leave a scooter unusable until a flash completes. It can void its warranty. Keeping to road traffic law stays your job: a scooter set up outside its approved configuration does not belong on public roads.
+**At your own risk.** You build and flash at your own risk. As far as the law allows, the developer is not liable for damage to the scooter, its controller, its battery or any other part, for lost data, for injury or for any other loss that comes out of using this page or the firmware it builds. Flashing can leave a scooter unusable until a flash completes. It can void its warranty. Keeping to road traffic law stays your job.
+
+**Road approval and insurance.** Lifting the 22 km/h limit takes the scooter out of its eKFV road approval and, with it, out of its insurance cover. A scooter in that state belongs on private ground or on a test bench, never in public traffic. On a public road it has to carry its approved configuration. Nothing here is an encouragement to ride it anywhere else.
 
 **Not the manufacturer's firmware.** This page ships none. You supply the stock image from your own scooter and it stays on your device. The stock firmware is the manufacturer's work and this page grants you no right in it.
 

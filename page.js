@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v30";
+var BUILD = "v31";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -325,6 +325,9 @@ function mdToHtml(src) {
     if (list !== kind) { closeList(); out.push("<" + kind + ">"); list = kind; }
   }
   function block() { flushPara(); closeList(); }
+  function cells(l) {
+    return l.replace(/^\||\|$/g, "").split("|").map(function (c) { return c.trim(); });
+  }
 
   for (var i = 0; i < lines.length; i++) {
     var l = lines[i], m;
@@ -337,6 +340,23 @@ function mdToHtml(src) {
     if (l.indexOf("```") === 0) { block(); out.push("<pre><code>"); inFence = true; continue; }
     if (/^\s*$/.test(l)) { block(); continue; }
     if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(l)) { block(); out.push("<hr>"); continue; }
+    // A header row followed by a divider row starts a table. The box around it scrolls,
+    // so a wide table never pushes the page sideways on a phone.
+    if (l.trim().indexOf("|") === 0
+        && /^\|[\s:|-]+\|?\s*$/.test((lines[i + 1] || "").trim())) {
+      block();
+      out.push('<div class="doc-table"><table><thead><tr>'
+        + cells(l.trim()).map(function (c) { return "<th>" + inline(c) + "</th>"; }).join("")
+        + "</tr></thead><tbody>");
+      i++;
+      while (i + 1 < lines.length && lines[i + 1].trim().indexOf("|") === 0) {
+        out.push("<tr>"
+          + cells(lines[++i].trim()).map(function (c) { return "<td>" + inline(c) + "</td>"; }).join("")
+          + "</tr>");
+      }
+      out.push("</tbody></table></div>");
+      continue;
+    }
     if ((m = l.match(/^(#{1,4})\s+(.*)$/))) {
       block();
       out.push("<h" + m[1].length + ' id="' + slug(m[2]) + '">' + inline(m[2])

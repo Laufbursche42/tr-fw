@@ -199,6 +199,14 @@ dialog { max-height: 88vh; overflow-y: auto; }
   padding: .75rem .9rem; margin: 0 0 .9rem; overflow-x: auto; }
 .doc-body pre code { border: 0; background: none; padding: 0; font-size: .78rem; line-height: 1.55; }
 .doc-body hr { border: 0; border-top: 1px solid var(--border); margin: 1.3rem 0; }
+/* A table scrolls inside its own box, so a wide one never pushes the page sideways. */
+.doc-table { overflow-x: auto; margin: 0 0 .9rem; }
+.doc-body table { border-collapse: collapse; width: 100%; font-size: .8rem; }
+.doc-body th, .doc-body td {
+  border: 1px solid var(--border); padding: .45rem .55rem;
+  text-align: left; vertical-align: top;
+}
+.doc-body th { color: var(--text); background: #0d1018; font-weight: 600; }
 .doc-body blockquote { margin: 0 0 .9rem; padding-left: .8rem; color: #8a93a8;
   border-left: 2px solid var(--border); }
 .doc-foot { display: flex; justify-content: center; padding: .9rem 1.25rem;

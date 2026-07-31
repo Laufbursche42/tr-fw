@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v26";
+var BUILD = "v27";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -36,6 +36,7 @@ function applyLang() {
   }
   // The href is only the fallback for opening in a new tab, but it follows the
   // language as well, so a long press never lands on the other language.
+  document.getElementById("readmeLink").href = docFile("README");
   document.getElementById("changelogLink").href = docFile("CHANGELOG");
   document.getElementById("privacyLink").href = docFile("PRIVACY");
   document.getElementById("licenseLink").href = docFile("LICENSE");
@@ -347,6 +348,7 @@ var docCache = {};
 // wording of the licence.
 function docFile(name) {
   if (name === "CHANGELOG" || name === "PRIVACY") return name + "." + lang + ".md";
+  if (name === "README") return "README.md";   // only exists in English
   return lang === "de" ? name + ".de.md" : name + ".md";
 }
 

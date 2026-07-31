@@ -84,6 +84,7 @@ window.I18N = {
     badTitle: "Nicht gebaut",
 
     source: "Quellcode",
+    readme: "Readme",
     changelog: "Changelog für Firmware",
     disclaimer: "Haftungsausschluss",
     privacy: "Datenschutz",
@@ -177,6 +178,7 @@ window.I18N = {
     badTitle: "Not built",
 
     source: "Source",
+    readme: "Readme",
     changelog: "Changelog for Firmware",
     disclaimer: "Disclaimer",
     privacy: "Privacy",

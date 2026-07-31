@@ -2,9 +2,9 @@
 
 A web page that builds a Laufbursche firmware for the **Teverun Fighter Mini (eKFV)** from the stock firmware of your own scooter.
 
-Everything runs in the browser. Nothing is uploaded, nothing is stored on a server and the page ships no firmware of its own.
-
 > **This is a feasibility study.** It exists to show what a Teverun scooter's firmware makes possible, not to be a finished product. Error-free operation is not promised and there is no warranty of any kind. Whatever you build here and flash, you do at your own risk. Read the [Disclaimer](#disclaimer--trademarks) before you flash anything.
+
+Everything runs in the browser. Nothing is uploaded, nothing is stored on a server and the page ships no firmware of its own.
 
 **Open the patcher: [laufbursche42.github.io/tr-fw](https://laufbursche42.github.io/tr-fw/)**
 
@@ -73,7 +73,7 @@ The builds here take a different route. They leave both gates exactly where they
 
 The VCU identity string is the same value the scooter advertises as its Bluetooth name (its FIN). It lives in the VCU's external I2C EEPROM config block and is mirrored into RAM at boot. If its first three characters are `TDE` the eKFV region restriction is latched on. The factory-default identity baked into the firmware image is `AWPE-VCU-220212`, which does not start with `TDE`, so a fresh VCU is unrestricted; the per-unit `TDE` marker is what a factory writes to enable the eKFV limit.
 
-This gate is changeable at runtime over BLE with command id 0x1f (see [Section 3.6](https://github.com/Laufbursche42/tr-lb-edition/blob/main/README.md#36-identity--device-name-change-cmd-0x1f)). It is written to EEPROM, so it survives a reboot, needs no firmware flash and is fully reversible by writing the old name back. This was confirmed on a real eKFV / TDE unit: setting a non-TDE name showed the new name after reconnect and persisted across a scooter power cycle.
+This gate is changeable at runtime over BLE. Command id 0x1f carries sixteen ASCII bytes, space padded. The VCU copies them into its identity. It is written to EEPROM, so it survives a reboot, needs no firmware flash and is fully reversible by writing the old name back. This was confirmed on a real eKFV / TDE unit: setting a non-TDE name showed the new name after reconnect and persisted across a scooter power cycle.
 
 ### Gate 2 - the display clamp bit
 

@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v27";
+var BUILD = "v28";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -368,7 +368,9 @@ function openDocFile(file, titleKey) {
 
   if (docCache[file]) { body.innerHTML = docCache[file]; body.scrollTop = 0; return; }   // scan-ok: markdown of our own documents, rendered by mdToHtml which escapes first
   body.innerHTML = "<p>" + escHtml(t("docLoading")) + "</p>";   // scan-ok: escaped
-  fetch(file).then(function (r) {
+  // Same marker the script tags carry: without it a document stays in the browser cache
+  // across builds and a reader keeps seeing the text from the first time they opened it.
+  fetch(file + "?v=" + BUILD).then(function (r) {
     if (!r.ok) throw new Error(r.status + " " + r.statusText);
     return r.text();
   }).then(function (txt) {

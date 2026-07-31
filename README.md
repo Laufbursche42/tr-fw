@@ -4,6 +4,8 @@ A web page that builds a Laufbursche firmware for the **Teverun Fighter Mini (eK
 
 Everything runs in the browser. Nothing is uploaded, nothing is stored on a server and the page ships no firmware of its own.
 
+> **This is a feasibility study.** It exists to show what a Teverun scooter's firmware makes possible, not to be a finished product. Error-free operation is not promised and there is no warranty of any kind. Whatever you build here and flash, you do at your own risk. Read the [Disclaimer](#disclaimer--trademarks) before you flash anything.
+
 **Open the patcher: [laufbursche42.github.io/tr-fw](https://laufbursche42.github.io/tr-fw/)**
 
 ---
@@ -186,6 +188,16 @@ The VCU carries an ARM Cortex-M4F on an STM32F1-style peripheral map, so a GD32F
 ### Legal and safety
 
 Removing the 22 km/h limit takes the scooter out of its eKFV road approval (ABE) and voids its insurance, so any de-restriction is for private-ground or research use only. This section explains what this page builds and where the findings behind it come from; it is not a how-to endorsement for public-road use. On a public road the scooter must keep its approved configuration.
+
+## Disclaimer & Trademarks
+
+**Feasibility study, no warranty.** This patcher is a feasibility study. What it builds is provided "as is". Nothing here promises that a build is free of defects, that it suits your scooter, that a value it reports is correct or that it still behaves the same after the next controller or display revision. The measurements quoted come from a small number of machines, in places from a single one. Where that is the case it is marked.
+
+**At your own risk.** You build and flash at your own risk. As far as the law allows, the developer is not liable for damage to the scooter, its controller, its battery or any other part, for lost data, for injury or for any other loss that comes out of using this page or the firmware it builds. Flashing can leave a scooter unusable until a flash completes. It can void its warranty. Keeping to road traffic law stays your job: a scooter set up outside its approved configuration does not belong on public roads.
+
+**Not the manufacturer's firmware.** This page ships none. You supply the stock image from your own scooter and it stays on your device. The stock firmware is the manufacturer's work and this page grants you no right in it.
+
+This is an independent, community project. It is not an official Teverun tool and the developer ("Laufbursche") is not affiliated with, endorsed by or connected to Teverun. "Teverun" and other product names are trademarks of their respective owners; the name is used here only descriptively to indicate the scooters this page works with. See [TRADEMARKS.md](TRADEMARKS.md) for details.
 
 ## License
 

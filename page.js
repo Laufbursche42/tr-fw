@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v32";
+var BUILD = "v34";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -42,6 +42,7 @@ function applyLang() {
   document.getElementById("licenseLink").href = docFile("LICENSE");
   document.getElementById("trademarksLink").href = docFile("TRADEMARKS");
   document.getElementById("docX").setAttribute("aria-label", t("docClose"));
+  labelTheme();
   renderVariantOptions();
   renderClampOptions();
   renderFeatures();
@@ -486,5 +487,39 @@ document.getElementById("disclaimerLink").addEventListener("click", function (e)
 });
 
 document.getElementById("variant").addEventListener("change", renderFeatures);
+
+// ---------------------------------------------------------------------------
+// Theme
+// ---------------------------------------------------------------------------
+// Dark is what the page opens with. The choice is remembered and the icon says what a
+// tap will do: a sun while the page is dark, a moon while it is light.
+
+var LS_THEME = "trfw_theme";
+var themeBtn = document.getElementById("themeBtn");
+
+function isDark() {
+  return document.documentElement.getAttribute("data-theme") !== "light";
+}
+
+function labelTheme() {
+  var lg = document.getElementById("langs");
+  if (lg) lg.setAttribute("aria-label", t("langGroup"));
+  themeBtn.setAttribute("aria-label", t(isDark() ? "themeToLight" : "themeToDark"));
+  themeBtn.title = themeBtn.getAttribute("aria-label");
+}
+
+function applyTheme(dark) {
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  themeBtn.textContent = dark ? "☀" : "☾";
+  labelTheme();
+  // Private browsing can refuse to store, which must not take the switch down with it.
+  try { localStorage.setItem(LS_THEME, dark ? "dark" : "light"); } catch (e) {}
+}
+
+themeBtn.addEventListener("click", function () { applyTheme(!isDark()); });
+
+var savedTheme = null;
+try { savedTheme = localStorage.getItem(LS_THEME); } catch (e) {}
+applyTheme(savedTheme !== "light");   // before applyLang, so the first label is in the right language
 
 applyLang();

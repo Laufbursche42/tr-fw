@@ -2,7 +2,13 @@
 
 What changes in the patcher and in the firmware it builds.
 
-The version number is the stamp the firmware reports over Bluetooth. The same number plus 200 is the build for older models without a factory kickstart. So there is V45 and V245.
+The version number is the stamp the firmware reports over Bluetooth. The same number plus 200 is the build for older models without a factory kickstart. So there is V46 and V246.
+
+---
+
+## V46 at a glance
+
+- **One command reached the wrong handler.** In the controller's command dispatcher, command 4 ends without a break, so it then ran on into the handling of the RGB lighting as well. A command 4 could therefore change the lighting. The compiler had left an empty instruction in that exact spot, so the branch fits there and nothing else in the firmware moves. Everything from V45 is still in.
 
 ---
 

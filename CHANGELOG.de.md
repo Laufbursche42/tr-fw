@@ -2,7 +2,13 @@
 
 Was sich am Patcher und an der gebauten Firmware ändert.
 
-Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Dieselbe Nummer plus 200 ist die Version für ältere Modelle ohne Kickstart ab Werk. Es gibt also V45 und V245.
+Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Dieselbe Nummer plus 200 ist die Version für ältere Modelle ohne Kickstart ab Werk. Es gibt also V46 und V246.
+
+---
+
+## V46 auf einen Blick
+
+- **Ein Befehl landete im falschen Handler.** Im Befehlsverteiler der Steuerung fehlt am Ende von Befehl 4 der Abbruch, dadurch lief er anschließend ungewollt auch noch in die Behandlung der RGB-Beleuchtung hinein. Ein Befehl 4 konnte damit die Beleuchtung verstellen. Der Compiler hatte an der Stelle ohnehin einen Leerbefehl stehen lassen, der Sprung passt also genau dorthin und nichts im Rest der Firmware verschiebt sich. Alles aus V45 bleibt unverändert enthalten.
 
 ---
 

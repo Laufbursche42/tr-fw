@@ -8,6 +8,22 @@ Everything runs in the browser. Nothing is uploaded, nothing is stored on a serv
 
 **Open the patcher: [laufbursche42.github.io/tr-fw](https://laufbursche42.github.io/tr-fw/)**
 
+Or run it yourself, no build step, no dependencies: clone the repo and serve the folder over a local HTTP server. Opening `index.html` directly as a `file://` URL will not work, the page fetches its own documents and browsers block that over `file://`.
+
+```
+git clone https://github.com/Laufbursche42/tr-fw.git
+cd tr-fw
+npx serve .
+```
+
+Any static server works. Without Node, Python's own one does the same job:
+
+```
+python -m http.server 8000
+```
+
+Then open the printed address in a browser that supports Web Bluetooth.
+
 ---
 
 ## What this is

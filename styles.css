@@ -191,8 +191,6 @@ dialog::backdrop { background: var(--backdrop); }
 .consent-row { display: flex; align-items: flex-start; gap: .6rem; margin: 0 0 .8rem;
   color: var(--text); font-size: .9rem; line-height: 1.5; cursor: pointer; }
 .consent-row input { margin: .2rem 0 0; accent-color: var(--accent); width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
-.dlg-body li.unverified { color: var(--warn); }
-.dlg-body li.unverified b { color: var(--warn); }
 /* contain keeps the wheel inside the dialog. Without it the page behind moves on
    once the dialog has scrolled to its end. */
 dialog { max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
@@ -207,16 +205,17 @@ dialog { max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
 /* Document viewer: the texts belong to this page, so they open here instead of
    sending the reader to a code host. Head and foot stay put, the text scrolls. */
 #doc { max-width: 44rem; max-height: 88vh; overflow: hidden; }
+#ee { max-height: 88vh; overflow: hidden; }
 /* Only the open dialog is a flex column: a display value on the closed one would
    beat the browser's display:none and drop the whole thing into the page. */
-#doc[open] { display: flex; flex-direction: column; }
+#doc[open], #ee[open] { display: flex; flex-direction: column; }
 .doc-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
 .doc-head h2 { margin: 0; font-size: 1rem; }
-#docX { background: none; border: 0; color: var(--label); font: 1.5rem/1 inherit;
+#docX, #eeX { background: none; border: 0; color: var(--label); font: 1.5rem/1 inherit;
   padding: 0 .2rem; cursor: pointer; }
-#docX:hover { color: var(--accent); }
-#docX:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#docX:hover, #eeX:hover { color: var(--accent); }
+#docX:focus-visible, #eeX:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .doc-body { padding: 1.1rem 1.25rem; overflow-y: auto; overscroll-behavior: contain;
   color: var(--label); font-size: .9rem; }
 .doc-body > :first-child { margin-top: 0; }
@@ -227,7 +226,6 @@ dialog { max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
 .doc-body ul, .doc-body ol { margin: 0 0 .9rem; padding-left: 1.2rem; }
 .doc-body li { margin-bottom: .35rem; }
 .doc-body b { color: var(--text); }
-.doc-body li.unverified, .doc-body li.unverified b { color: var(--warn); }
 .doc-body a { color: var(--accent); }
 .doc-body code { font: .85em var(--mono); background: var(--field); border: 1px solid var(--border);
   border-radius: .25rem; padding: .05rem .3rem; }
@@ -249,6 +247,112 @@ dialog { max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; }
   border-top: 1px solid var(--border); }
 .doc-foot button { font: 600 .92rem/1 inherit; padding: .7rem 1.4rem; border-radius: .4rem; cursor: pointer; }
 .doc-foot button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The EEPROM check. Its card sits above the numbered steps, because the reading
+   belongs to no build; the window itself borrows the document viewer's frame. */
+.eecheck { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem 1.1rem; margin: 0 0 2rem; }
+.ee-intro { margin: 0 0 .85rem; color: var(--label); font-size: .88rem; }
+.ee-btn { font: 600 .92rem/1 inherit; padding: .7rem 1.1rem; border-radius: .4rem; cursor: pointer;
+  background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.ee-btn:disabled { opacity: .45; cursor: not-allowed; color: var(--muted); border-color: var(--border); }
+.ee-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eecheck .hint { margin: .75rem 0 0; }
+
+/* One coloured bar in front of the state sentence, so the state reads before the text does.
+   Two lines are reserved whatever the sentence is: a state that wraps on a narrow phone
+   must not push the rows and the buttons under it. */
+.ee-status { margin: 0 0 .8rem; padding-left: .7rem; font-size: .88rem; line-height: 1.55;
+  min-height: calc(2 * 1.55em); color: var(--label);
+  border-left: 3px solid var(--border); }
+.ee-status.ok { border-left-color: var(--good); color: var(--text); }
+.ee-status.wait, .ee-status.warn { border-left-color: var(--warn); }
+.ee-status.bad { border-left-color: var(--danger); }
+.ee-read { margin: 0 0 1rem; font-size: .84rem; color: var(--muted); }
+
+/* One heading per section: the gear table above, the values without a gear below. */
+.ee-sec { margin: 1.35rem 0 .5rem; }
+.ee-sec-head { display: flex; align-items: center; gap: .4rem; }
+.ee-sec-title { margin: 0; font: 600 .72rem/1.5 var(--mono); letter-spacing: .1em;
+  text-transform: uppercase; color: var(--dim); }
+.ee-sec .ee-note { margin: .45rem 0 0; }
+
+/* The "?" beside a row: the explanation stays out of the way until it is asked for. */
+.ee-help {
+  flex: 0 0 auto; width: 1.15rem; height: 1.15rem; margin-left: .35rem; padding: 0;
+  border: 1px solid var(--border); border-radius: 50%; background: transparent;
+  color: var(--muted); font: 700 .68rem/1 var(--mono); cursor: pointer; vertical-align: middle;
+}
+.ee-help:hover { color: var(--accent); border-color: var(--accent); }
+.ee-help:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ee-help[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* The gear table. One column per gear and one row per value, so three gears take four
+   columns and stay inside the window; its box scrolls all the same, the way a wide table
+   in the document viewer does, for a scooter that reports a gear beyond those three. */
+.ee-tab-wrap { overflow-x: auto; }
+.ee-table { border-collapse: collapse; width: 100%; font-size: .82rem; }
+.ee-table th, .ee-table td {
+  border: 1px solid var(--border); padding: .3rem .5rem;
+  text-align: right; white-space: nowrap;
+}
+.ee-table thead th { background: var(--field);
+  font: 600 .66rem/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+/* The corner above the labels stays empty: the gears name themselves in the heads
+   beside it and the labels name themselves in the rows below. */
+.ee-table thead th.ee-tab-corner { text-align: left; }
+/* The gear heads its own column and the column of the gear the scooter is in right now
+   carries the accent, so it is found without reading the numbers. */
+.ee-table thead th.ee-tab-gear { white-space: nowrap; }
+.ee-table thead th.ee-gear-now { color: var(--accent); }
+.ee-table td.ee-gear-now { background: var(--field); }
+/* The labels stand at the start of their row and wrap inside their own cell instead of
+   stretching the table. */
+.ee-table tbody th.ee-tab-field {
+  text-align: left; white-space: normal;
+  font: inherit; font-size: .82rem; font-weight: 600; color: var(--label); background: none;
+}
+/* Live number and factory number share one cell, the factory one a step quieter. Each
+   number holds together while the pair breaks into two lines where the cell is too
+   narrow for both, so a gear column never pushes the table sideways. */
+.ee-table td.ee-tab-cell { font: .82rem/1.5 var(--mono); font-variant-numeric: tabular-nums;
+  white-space: normal; }
+.ee-table .ee-tab-live, .ee-table .ee-tab-ref { white-space: nowrap; }
+.ee-table .ee-tab-ref { margin-left: .3rem; color: var(--muted); }
+/* A row's "?" opens a full-width strip below it. No border or padding of its own while
+   its text stays hidden, so a closed explanation adds no visible line to the table. */
+.ee-table .ee-tab-panel-row td { border: none; padding: 0; white-space: normal; text-align: left; }
+.ee-table .ee-tab-panel-row .ee-note { margin: 0 0 .5rem; }
+
+/* Label, live value, factory value. Both number columns keep a fixed width, so the
+   rows line up under the two headings whatever the labels are called. */
+.ee-list { display: flex; flex-direction: column; }
+.ee-row { display: grid; grid-template-columns: 1fr 7rem 5.5rem; gap: .4rem;
+  align-items: baseline; padding: .35rem 0; border-bottom: 1px solid var(--border); }
+.ee-label { font-size: .86rem; color: var(--label); }
+.ee-val, .ee-ref { font: .86rem/1.5 var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.ee-ref { color: var(--muted); }
+.ee-head-row .ee-val, .ee-head-row .ee-ref {
+  font: 600 .68rem/1.5 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+/* The wheel row is greyed because it is not evidence on stock firmware. */
+.ee-dim .ee-label, .ee-dim .ee-val, .ee-dim .ee-ref { color: var(--dim); }
+.ee-note { margin: .4rem 0 .7rem; font-size: .78rem; color: var(--muted); }
+/* Stays visible without a click: the one row a reset can leave silently wrong. */
+.ee-warn { color: var(--danger); font-weight: 600; }
+/* On a narrow phone the number columns give way first, so a long label wraps inside
+   its own cell instead of pushing the row sideways. */
+@media (max-width: 26rem) {
+  .ee-row { grid-template-columns: 1fr 5rem 4.2rem; }
+  .ee-val, .ee-ref { font-size: .8rem; }
+  /* The table gives way in the padding and in the type: the four columns of three gears
+     stay side by side, the factory number drops under the live one where a cell runs out
+     of room. */
+  .ee-table { font-size: .78rem; }
+  .ee-table th, .ee-table td { padding: .28rem .3rem; }
+  .ee-table td.ee-tab-cell { font-size: .78rem; }
+  .ee-table tbody th.ee-tab-field { font-size: .76rem; }
+  .ee-table .ee-tab-ref { margin-left: .2rem; }
+}
 
 /* The links take the first row and the build stamp its own line underneath. */
 footer { margin-top: 2.5rem; padding-top: 1.1rem; border-top: 1px solid var(--border);

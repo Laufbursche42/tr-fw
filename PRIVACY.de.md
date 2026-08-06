@@ -8,6 +8,8 @@ Die Datei, die du auswählst, wird **im Browser gelesen und dort verarbeitet**. 
 
 Du kannst das nachprüfen: schalte nach dem Laden der Seite die Netzwerkverbindung ab. Das Bauen funktioniert weiterhin.
 
+Der Button **EEPROM prüfen** verbindet sich per Bluetooth direkt aus deinem Browser mit deinem eigenen Roller, an einen Server geht keiner der angezeigten Werte.
+
 ## Hosting
 
 Die Seite liegt bei GitHub Pages. GitHub protokolliert Aufrufe seiner Server, dazu gehört üblicherweise die IP-Adresse, der Zeitpunkt und die abgerufene Adresse. Darauf haben wir keinen Einfluss und wir sehen diese Protokolle auch nicht.

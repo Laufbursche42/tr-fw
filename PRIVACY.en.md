@@ -8,6 +8,8 @@ The file you pick is **read and processed in the browser**. It is not uploaded, 
 
 You can check this: switch off your network connection once the page has loaded. Building still works.
 
+The **Check your EEPROM** button connects over Bluetooth from your own browser directly to your own scooter, so no reading it shows is sent to any server.
+
 ## Hosting
 
 The page is served by GitHub Pages. GitHub logs requests to its servers, which usually includes the IP address, the time and the address requested. We have no influence over that and we do not see those logs.

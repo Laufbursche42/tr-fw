@@ -11,7 +11,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="favicon-180.png">
 
-<link rel="stylesheet" href="styles.css?v=34">
+<link rel="stylesheet" href="styles.css?v=35">
 </head>
 <body>
 <div class="wrap">
@@ -29,6 +29,14 @@
 
   <p class="lede" data-t="lede"></p>
   <p class="lede" data-t="ledePrivacy"></p>
+
+  <!-- Outside the numbered steps on purpose: reading the EEPROM has nothing to do with
+       which build is being put together, it is run once before a flash and once after. -->
+  <section class="eecheck">
+    <p class="ee-intro" data-t="eeIntro"></p>
+    <button type="button" class="ee-btn" id="eeBtn" data-t="eeBtn"></button>
+    <p class="hint" id="eeNoBt" data-t="eeUnsupported" hidden></p>
+  </section>
 
   <section class="step">
     <div class="step-head"><span class="step-num">01</span><h2 class="step-title" data-t="s1"></h2></div>
@@ -61,7 +69,7 @@
 
     <p class="note" data-t="detailsNote"></p>
 
-    <section class="step">
+    <section class="step" id="stepClamp">
       <div class="step-head"><span class="step-num">03</span><h2 class="step-title" data-t="s3"></h2></div>
       <p class="pick-help" data-t="clampHelp"></p>
       <label class="pick">
@@ -75,7 +83,7 @@
       <p class="hint" data-t="clampNote"></p>
     </section>
 
-    <section class="step">
+    <section class="step" id="stepBlinker">
       <div class="step-head"><span class="step-num">04</span><h2 class="step-title" data-t="s4"></h2></div>
       <label class="opt">
         <input type="checkbox" id="blinker">
@@ -85,7 +93,7 @@
 
     <section class="step">
       <div class="step-head"><span class="step-num">05</span><h2 class="step-title" data-t="s5"></h2></div>
-      <p class="note" data-t="lockNote"></p>
+      <p class="note" id="lockNote" data-t="lockNote"></p>
       <button class="build" id="build" data-t="buildBtn"></button>
       <div id="out" aria-live="polite"></div>
     </section>
@@ -134,8 +142,36 @@
   </div>
 </dialog>
 
-<script src="patcher.js?v=34"></script>
-<script src="i18n.js?v=34"></script>
-<script src="page.js?v=34"></script>
+<dialog id="ee" aria-labelledby="eeTitle">
+  <div class="doc-head">
+    <h2 id="eeTitle" data-t="eeTitle"></h2>
+    <button type="button" id="eeX">&times;</button>
+  </div>
+  <div class="doc-body">
+    <p class="ee-status" id="eeStatus" aria-live="polite"></p>
+    <p class="ee-read" data-t="eeReadOnly"></p>
+    <!-- Three sections, all built by the script: labels, live values and the factory
+         column all follow the language; only the script knows which gears were
+         reported and which identity frames arrived. First the scooter's own identity,
+         not EEPROM settings but useful to have beside them; then the gear table, one
+         column per gear and one row per value; then the values that belong to no gear. -->
+    <div class="ee-sec" id="eeIdentitySec"></div>
+    <div class="ee-list" id="eeIdentityList"></div>
+    <div class="ee-sec" id="eeGearSec"></div>
+    <div class="ee-tab-wrap" id="eeGearTable"></div>
+    <div class="ee-sec" id="eeGlobalSec"></div>
+    <div class="ee-list" id="eeList"></div>
+    <p class="hint" id="eeCopied" aria-live="polite"></p>
+  </div>
+  <div class="doc-foot">
+    <button type="button" class="btn-go" id="eeCopy" data-t="eeCopy"></button>
+    <button type="button" class="btn-cancel" id="eeClose" data-t="docClose"></button>
+  </div>
+</dialog>
+
+<script src="patcher.js?v=35"></script>
+<script src="i18n.js?v=35"></script>
+<script src="ble.js?v=35"></script>
+<script src="page.js?v=35"></script>
 </body>
 </html>

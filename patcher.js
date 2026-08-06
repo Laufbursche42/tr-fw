@@ -19,6 +19,9 @@
 
 var FW_BUILD = 46;
 var FW_BUILD_KICK = 246;
+// The eraser writes no version byte and its file is named by its own tag, so this
+// number stays inside the patcher and reaches nothing the rider sees.
+var FW_BUILD_ERASE = 147;
 var PATCHES = {
   CORE: [
     [0x08007150, [0x00,0x48,0x00,0x47], [0x16,0xF0,0x10,0xBD]],
@@ -65,6 +68,22 @@ var PATCHES = {
     [0x0801D78F, [0x6E], [0x64]],
     [0x0801D792, [0x30], [0x2A]],
     [0x0801D793, [0x3C], [0x34]],
+  ],
+  // Restores the stored ride settings to the factory table: the call site goes
+  // to a cave that flips one bit in each of the five block bytes the checksum
+  // covers (0x2F-0x33, enough to force the mismatch that makes stock reload the
+  // factory table), then calls the factory-table writer and the loader
+  // unconditionally, bypassing stock's own checksum gate. Two further bytes
+  // (0x36/0x37) sit outside the checksum and are left untouched entirely, since
+  // nothing here needs them to change for the reload to trigger.
+  EEPROMERASE: [
+    [0x08017958, [0xFF,0xF7,0x84,0xFC], [0x06,0xF0,0xD0,0xF8]],
+    [0x0801DAFC, null, [0x00,0xB5,0x10,0x49,0x01,0x22,0x91,0xF8,0x2F,0x00,0x50,0x40,0x81,
+                        0xF8,0x2F,0x00,0x91,0xF8,0x30,0x00,0x50,0x40,0x81,0xF8,0x30,0x00,
+                        0x91,0xF8,0x31,0x00,0x50,0x40,0x81,0xF8,0x31,0x00,0x91,0xF8,0x32,
+                        0x00,0x50,0x40,0x81,0xF8,0x32,0x00,0x91,0xF8,0x33,0x00,0x50,0x40,
+                        0x81,0xF8,0x33,0x00,0xF9,0xF7,0x69,0xFB,0xF9,0xF7,0x94,0xFB,0x00,
+                        0xBD,0x00,0xBF,0x28,0x1A,0x00,0x20]],
   ],
 };
 
@@ -210,12 +229,15 @@ function buildHex(img) {
   return { text: out, crc: crc, appBytes: app.length };
 }
 
-// The two builds. Both carry the lock, the wheel size handling, the corrected
-// factory defaults and the optional blinker fix. Nothing here pushes values
-// between the controller and the display: the display owns the settings the way
-// it does from the factory and anything that force-fed it made the two fight.
+// The builds, each one on its own. Standard and kickstart carry the lock, the
+// wheel size handling, the corrected factory defaults and the optional blinker
+// fix. Nothing here pushes values between the controller and the display: the
+// display owns the settings the way it does from the factory and anything that
+// force-fed it made the two fight.
 // clampScale is the factor between a build's own setpoint scale and the plain
-// one, so the same selected limit means the same speed in both builds.
+// one, so the same selected limit means the same speed in either of those two.
+// The eraser is stock plus the one call that clears the stored ride settings,
+// so it writes neither the version byte nor a clamp, and its file is named "_ee".
 var VARIANTS = {
   standard: {
     key: "standard",
@@ -228,6 +250,12 @@ var VARIANTS = {
     stamp: FW_BUILD_KICK,
     groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS"],
     clampScale: 4
+  },
+  eepromerase: {
+    key: "eepromerase",
+    stamp: FW_BUILD_ERASE,
+    groups: ["EEPROMERASE"],
+    clampScale: 1
   }
 };
 
@@ -276,6 +304,7 @@ var BASES = {
       0x0801083C: 0x080109E2,
       0x08010B64: 0x08010C44,
       0x0801730E: 0x080173EE,
+      0x08017958: 0x08017A38,
       0x08017C64: 0x08017D44,
       0x08019610: 0x080196F0,
       0x0801D78F: 0x0801D86F,
@@ -299,6 +328,8 @@ var BASES = {
       0x08010840: 0x080109E6,
       0x08010B68: 0x08010C48,
       0x0801700C: 0x080170EC,
+      0x0801720A: 0x080172EA,
+      0x08017264: 0x08017344,
       0x08017C68: 0x08017D48
     },
     // Five sites load a variable through a pc relative offset that R5.4.21 sizes
@@ -468,11 +499,14 @@ function build(text, variantKey, opts) {
     if (!rows) throw new Error("unknown patch group " + groups[i]);
     applyGroup(img, translate(rows, base), groups[i].toLowerCase());
   }
-  // CORE leaves the reported version byte at the standard number; every variant
-  // stamps its own here, so the number the scooter reports names the build exactly.
-  img.mem.set(mapSite(base, STAMP_ADDR), v.stamp);
-  img.mem.set(mapSite(base, CLAMP_STOCK_ADDR), stockClamp);
-  img.mem.set(mapSite(base, CLAMP_RELOCK_ADDR), relockClamp);
+  // All three bytes belong to core, so only a build that carries it writes them:
+  // core leaves the reported version byte at the standard number and its stamp
+  // goes here, and the two clamp bytes sit inside core's own cave.
+  if (groups.indexOf("CORE") >= 0) {
+    img.mem.set(mapSite(base, STAMP_ADDR), v.stamp);
+    img.mem.set(mapSite(base, CLAMP_STOCK_ADDR), stockClamp);
+    img.mem.set(mapSite(base, CLAMP_RELOCK_ADDR), relockClamp);
+  }
 
   var res = buildHex(img);
   res.variant = v;
@@ -486,7 +520,8 @@ function build(text, variantKey, opts) {
 
 // Usable both in the page (window) and in a plain node check, so the
 // verification runs the very same code the page runs.
-var API = { FW_BUILD: FW_BUILD, FW_BUILD_KICK: FW_BUILD_KICK, fromHex: fromHex, applyGroup: applyGroup,
+var API = { FW_BUILD: FW_BUILD, FW_BUILD_KICK: FW_BUILD_KICK, FW_BUILD_ERASE: FW_BUILD_ERASE,
+            fromHex: fromHex, applyGroup: applyGroup,
             buildHex: buildHex, crc16Modbus: crc16Modbus, build: build, VARIANTS: VARIANTS,
             identify: identify, BASES: BASES, PATCHES: PATCHES, translate: translate,
             decodeWide: decodeWide, encodeWide: encodeWide,

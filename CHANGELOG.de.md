@@ -2,7 +2,29 @@
 
 Was sich am Patcher und an der gebauten Firmware ändert.
 
-Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Dieselbe Nummer plus 200 ist die Version für ältere Modelle ohne Kickstart ab Werk. Es gibt also V46 und V246.
+Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Dieselbe Nummer plus 200 ist die Version für ältere Modelle ohne Kickstart ab Werk. Es gibt also V46 und V246. Der **EEPROM zurücksetzen**-Build meldet keine eigene Version über Bluetooth und trägt deshalb nirgends eine Nummer; seine Datei endet auf `_ee`.
+
+---
+
+## EEPROM prüfen
+
+- **Neuer Button „EEPROM prüfen" auf der Seite.** Er verbindet sich über Bluetooth mit deinem eigenen Roller und öffnet ein Fenster mit den Einstellungen, die die Steuerung gerade meldet, daneben die Werkswerte. Unten ein Button, der die ganze Ablesung in die Zwischenablage legt. Gedacht ist das vor allem für den Vergleich vor und nach `EEPROM zurücksetzen`.
+- **Liest nur, sendet nichts weg.** Die Bluetooth-Verbindung läuft direkt vom Browser zum Roller, ohne Server dazwischen, nichts von dem, was die Steuerung meldet, verlässt dein Gerät. Das funktioniert unabhängig davon, womit vorher geflasht wurde.
+- **Jedes Einstellungsfeld, auch die überschriebenen.** Manche Werte schreibt die Firmware bei jedem Start selbst zurück oder maskiert sie fürs Display, unabhängig davon, was im EEPROM steht. Genau die stehen trotzdem in der Liste, ausgegraut und mit einer Erklärung, warum der angezeigte Wert nicht das ist, was wirklich gespeichert ist.
+- **Auch die Identität des Rollers.** FIN, Rahmennummer, VCU-Version und Kilometerstand kommen aus der Steuerung selbst, die Akkuwerte aus dem batterieeigenen Speicher dahinter. Jede Zeile sagt zusätzlich, ob sie über Bluetooth setzbar ist und ob ein EEPROM-Reset sie überhaupt berührt, bei der FIN zum Beispiel nicht, die liegt außerhalb des zurückgesetzten Blocks.
+- **Auch nicht auslesbare Bytes tauchen in der Liste auf**, mit kurzer Begründung: reservierte Bytes, Prüfsummen und rein interne Werte, die über kein Bluetooth-Kommando nach draußen kommen.
+- **Adress-Referenz für Assembler-Leser.** EEPROM-Offset, RAM-Adresse und BLE-Frame-Index zu jedem Feld, direkt im jeweiligen `?` und als Tabelle im README.
+- **Geschrieben wird nichts.** Die Steuerung sendet ihre Frames von selbst, es gibt keinen Lesebefehl und keine Einstellung wird verändert.
+- **Browser.** Chrome oder Edge am Rechner, Chrome auf Android, [Bluefy](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055) auf iPhone und iPad. Safari, Chrome und Firefox auf dem iPhone haben kein Web Bluetooth, die laufen dort alle auf Safaris Unterbau. Die Verbindung läuft von deinem Browser zu deinem Roller, gesendet wird nichts irgendwohin. Details im Abschnitt [Check your EEPROM](README.md#check-your-eeprom) der README.
+
+---
+
+## EEPROM zurücksetzen
+
+- **Neuer, eigenständiger Build.** Kein Entsperren, keine Versionsnummer über Bluetooth. Echte, unveränderte Serien-Firmware, bei der ein einziger Start-Aufruf auf eine angehängte Routine umgelenkt wird.
+- **Was die Routine tut.** Sie kippt je ein Bit in fünf Bytes des EEPROM-Einstellungsblocks, die nirgends gelesen werden, genug um die gespeicherte Prüfsumme zu brechen, und ruft danach den Werkstabellen-Writer und den Einstellungs-Loader unbedingt auf, statt wie die STOCK FW den Writer nur bei einem Prüfsummen-Fehler aufzurufen. Dieser Bypass ist der eigentliche Mechanismus: der Writer zwingt den kompletten Einstellungsblock zurück auf die Werkswerte, darunter den Tempomat, egal ob die gespeicherte Prüfsumme noch gültig aussieht.
+- **Läuft auf R5.4.19 und auf R5.4.21.** Beide Serienstände bekommen dieselbe Routine, an die jeweilige Adresslage angepasst.
+- **Anwendung.** Einmal flashen und den Roller einmal starten lassen, danach eine echte Serien-Firmware darüber flashen. Details im Abschnitt [EEPROM reset](README.md#eeprom-reset) der README.
 
 ---
 
@@ -24,8 +46,8 @@ Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die
 
 Es gibt zwei. Sie unterscheiden sich in dem, was die Steuerung dem Motorcontroller über die Sollwert-Skala sagt, sonst sind sie gleich.
 
-- **V45, Standard.** Der Normalfall. Die Skala bleibt so, wie der Controller sie ab Werk gesetzt bekommt.
-- **V245, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
+- **V46, Standard.** Der Normalfall. Die Skala bleibt so, wie der Controller sie ab Werk gesetzt bekommt.
+- **V246, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
 
 Die Wahl ist keine Einbahnstraße. Passt eine Version nicht, wählst du im Patcher eine andere und flashst erneut. Wie oft ein Controller geflasht werden darf, ist nicht begrenzt.
 
@@ -35,7 +57,7 @@ Die Wahl ist keine Einbahnstraße. Passt eine Version nicht, wählst du im Patch
 
 R5.4.19 und R5.4.21. Erkannt wird der Inhalt des Abbilds, nicht der Dateiname, eine anders formatierte Hex-Datei derselben Firmware geht also genauso durch.
 
-Die gebaute Datei trägt den Serienstand im Namen, `AWIVCU_APP_R5_4_19_V45.hex` oder `AWIVCU_APP_R5_4_21_V45.hex`. Geflasht wird nur die Datei, die zu dem Stand passt, der auf deinem Roller läuft. Die andere gehört auf einen anderen Roller.
+Die gebaute Datei entsteht aus deiner hochgeladenen Datei und trägt deren Serienstand im Namen, `AWIVCU_APP_R5_4_19_V46.hex` oder `AWIVCU_APP_R5_4_21_V46.hex`. So lassen sich mehrere heruntergeladene Dateien im selben Ordner auf einen Blick auseinanderhalten und die richtige landet auf dem richtigen Roller.
 
 ---
 
@@ -66,11 +88,10 @@ Beide Versionen enthalten:
 - Werksvorgaben sind 10 Zoll und 52 V. Fällt der Controller darauf zurück, fährt der Roller weiter statt in den Unterspannungsschutz zu laufen
 - Blinker-Fix, beim Bauen wählbar
 
-Nur die Version für ältere Controller (V245):
+Nur die Version für ältere Controller (V246):
 
 - Anfahren ohne Antreten (Kickstart) fest eingeschaltet
 - gesperrt wird der Sollwert zuerst begrenzt und dann halbiert. Deshalb hängt die gesperrte Höchstgeschwindigkeit am gewählten Gang: der oberste Gang läuft bis an die Grenze, die unteren Gänge bleiben darunter. So kommt kein Gang gesperrt über die Grenze
-- **Ungeprüft:** die gesperrte Geschwindigkeit dieser Version ist auf keinem älteren Controller nachgemessen. Der Wert, der sie begrenzt, ist aus Messungen an einem neueren Controller berechnet. Der Bau-Dialog weist beim Bauen darauf hin
 
 ---
 

@@ -53,7 +53,7 @@ while ((m = literal.exec(app)) !== null) literals.add(m[1]);
 // and the arrays are read straight off window.I18N[lang].
 const dynamic = new Set([
   'okStock', 'badUnreadable', 'badVersion', 'badRange', 'badSize', 'badContent',
-  'featCommon', 'featKickExtra', 'dlgPoints',
+  'featCommon', 'featKickExtra', 'dlgPoints', 'dlgPointsErase',
 ]);
 
 const top = Object.keys(I18N.de);

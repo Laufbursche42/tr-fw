@@ -2,7 +2,29 @@
 
 What changes in the patcher and in the firmware it builds.
 
-The version number is the stamp the firmware reports over Bluetooth. The same number plus 200 is the build for older models without a factory kickstart. So there is V46 and V246.
+The version number is the stamp the firmware reports over Bluetooth. The same number plus 200 is the build for older models without a factory kickstart. So there is V46 and V246. The **EEPROM reset** build reports no version of its own over Bluetooth, so it carries no number anywhere; its file ends in `_ee`.
+
+---
+
+## Check your EEPROM
+
+- **New "Check your EEPROM" button on the page.** It connects to your own scooter over Bluetooth and opens a window with the settings the controller reports right now beside the factory values, plus a copy button for the whole reading. Built mainly for comparing before and after `EEPROM reset`.
+- **Reads only, sends nothing anywhere.** The Bluetooth connection runs straight from your browser to the scooter, no server in between, nothing the controller reports ever leaves your device. This works no matter what was used to flash it beforehand.
+- **Every settings field, including the overwritten ones.** Some values the firmware itself writes back or masks for the display on every boot, no matter what is actually stored in the EEPROM. Those are still in the list, greyed out, with an explanation of why the shown value is not what is really saved.
+- **Also the scooter's own identity.** FIN, frame number, VCU version and the odometer come from the controller itself, the battery figures from the battery's own storage behind it. Every row also says whether it can be set over Bluetooth and whether an EEPROM reset touches it at all - the FIN, for one, does not, it lives outside the block a reset restores.
+- **Bytes that genuinely cannot be read show up too**, with a short reason: reserved bytes, checksums and values that stay internal, never carried by any Bluetooth command.
+- **Address reference for anyone reading the disassembly.** EEPROM offset, RAM address and BLE frame index for every field, right in its own `?` and as a table in the README.
+- **Nothing is written.** The controller sends its frames on its own, there is no read command and no setting is changed.
+- **Browser support.** Chrome or Edge on the desktop, Chrome on Android, [Bluefy](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055) on iPhone and iPad. Safari, Chrome and Firefox on the iPhone have no Web Bluetooth, they all run on Safari's engine there. The link runs from your browser to your scooter, nothing is sent anywhere. Detail is in the [Check your EEPROM](README.md#check-your-eeprom) section of the README.
+
+---
+
+## EEPROM reset
+
+- **New, standalone build.** No unlock, no version number over Bluetooth. Genuine, unmodified stock firmware with a single start-up call redirected to an appended routine.
+- **What the routine does.** It flips one bit in each of five bytes in the EEPROM settings block that are never read anywhere, enough to break the stored checksum, then calls the factory-table writer and the settings loader unconditionally, instead of stock's own gate that only calls the writer on a checksum mismatch. That bypass is the real mechanism: the writer forces the whole settings block back to the factory values, cruise control among them, whether or not the stored checksum still looks valid.
+- **Runs on R5.4.19 and on R5.4.21.** Both stock versions get the same routine, relocated to match each one's own address layout.
+- **How to use it.** Flash it once and let the scooter boot, then flash a genuine stock firmware over it. Full detail is in the [EEPROM reset](README.md#eeprom-reset) section of the README.
 
 ---
 
@@ -24,8 +46,8 @@ The version number is the stamp the firmware reports over Bluetooth. The same nu
 
 There are two. They differ in what the controller tells the motor controller about the setpoint scale, everything else is the same.
 
-- **V45, standard.** The normal case. The scale stays the way the controller gets it set from the factory.
-- **V245, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
+- **V46, standard.** The normal case. The scale stays the way the controller gets it set from the factory.
+- **V246, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
 
 The choice is not one way. If a build does not suit, pick another one in the patcher and flash again. There is no limit on how often a controller may be flashed.
 
@@ -35,7 +57,7 @@ The choice is not one way. If a build does not suit, pick another one in the pat
 
 R5.4.19 and R5.4.21. What is recognised is the content of the image, not the file name, so a differently formatted hex of the same firmware passes just as well.
 
-The built file carries the stock version in its name, `AWIVCU_APP_R5_4_19_V45.hex` or `AWIVCU_APP_R5_4_21_V45.hex`. Flash only the file that matches the version running on your scooter. The other one belongs on a different scooter.
+The built file comes out of the file you uploaded and carries that stock version in its name, `AWIVCU_APP_R5_4_19_V46.hex` or `AWIVCU_APP_R5_4_21_V46.hex`. So several downloaded builds in one folder stay apart at a glance and the right one goes on the right scooter.
 
 ---
 
@@ -66,11 +88,10 @@ Both builds carry:
 - factory defaults are 10 inch and 52 V. If the controller falls back on them, the scooter keeps running instead of dropping into undervoltage protection
 - blinker fix, selectable when building
 
-The build for older controllers (V245) only:
+The build for older controllers (V246) only:
 
 - zero start (kickstart) permanently on
 - while locked the setpoint is capped first and then halved. The locked top speed therefore depends on the selected gear: the top gear runs up to the limit, the lower gears stay below it. That way no gear runs over the limit while locked
-- **Unverified:** the locked speed of this build has not been measured on any older controller. The value that caps it is calculated from measurements taken on a newer controller. The build dialog says so when you create it
 
 ---
 

@@ -28,4 +28,4 @@ Diese Zusammenfassung ist kein Lizenztext. Sie nennt nur die Punkte, nach denen 
 - **Keine Haftung.** Soweit das Gesetz es zulässt, wird die Software ohne jede Gewährleistung bereitgestellt und der Lizenzgeber haftet nicht für Schäden aus diesen Bedingungen oder aus der Nutzung der Software.
 - **Verstöße.** Beim ersten schriftlich mitgeteilten Verstoß bleiben die Lizenzen erhalten, wenn du binnen 32 Tagen die Bedingungen vollständig einhältst und das Vergangene praktisch berichtigst. Sonst enden sie sofort.
 
-Der vollständige Text steht unter <https://polyformproject.org/licenses/noncommercial/1.0.0> sowie in [LICENSE.md](LICENSE.md).
+Der vollständige Text steht unter [https://polyformproject.org/licenses/noncommercial/1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0) sowie in [LICENSE.md](LICENSE.md).

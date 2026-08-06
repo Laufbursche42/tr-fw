@@ -2,7 +2,7 @@
 
 // Page wiring. Bump BUILD together with the ?v= on every script tag in
 // index.html, so a cached script and a fresh page can never disagree.
-var BUILD = "v35";
+var BUILD = "v37";
 
 var lang = "de";   // German is the default; the switcher is right at the top for everyone else
 var loaded = null;   // { name, text } of a file that passed the approval check
@@ -523,7 +523,7 @@ function openDocFile(file, titleKey, anchor) {
     body.scrollTop = 0;
     if (anchor) scrollDocTo(anchor);
   })["catch"](function (e) {
-    body.innerHTML = "<p>" + escHtml(t("docFail")) + "</p><pre class=\"err\">" + file + ": "   // scan-ok: escaped
+    body.innerHTML = "<p>" + escHtml(t("docFail")) + "</p><pre class=\"err\">" + escHtml(file) + ": "   // scan-ok: escaped
                    + escHtml(e && e.message ? e.message : String(e)) + "</pre>";
   });
 }
@@ -557,7 +557,8 @@ function openDisclaimer() {
   var html = "<p>" + t("dlgLede") + "</p><ul>";
   var pts = disclaimerPoints();
   for (var i = 0; i < pts.length; i++) html += "<li>" + pts[i] + "</li>";
-  body.innerHTML = html + "</ul>";   // scan-ok: escaped lede, list items from our own translation table
+  html += "</ul>";
+  body.innerHTML = html;   // scan-ok: lede and list items are our own translation table, not user data
   body.scrollTop = 0;
   if (typeof docDlg.showModal === "function") docDlg.showModal();
 }

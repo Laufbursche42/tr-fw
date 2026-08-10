@@ -37,7 +37,7 @@ You supply the stock image from your own scooter, the page applies the patch set
 Three builds, one at a time. Two of them unlock. Those two exclude each other, because both decide the same instruction in the four controller frame builders:
 
 - **V46** the normal case. It leaves the setpoint scale bit the way the controller gets it from the factory.
-- **V246** for older controllers that cannot switch their zero start off. On any other controller this one leaves the throttle dead.
+- **V247** for older controllers that cannot switch their zero start off. On any other controller this one leaves the throttle dead.
 
 Those two let you pick the speed the scooter is clamped to while it is locked, as two separate numbers out of `19`, `20`, `21` and `22`: one that applies while the scooter has not been unlocked since it was switched on, one that applies after it has been unlocked and locked again. These are the firmware's own setpoint units, not km/h. `20` is the value every build so far shipped and measures 455 rpm at the wheel; what that turns into on the road depends on the scooter, which is why it can be set.
 
@@ -142,7 +142,7 @@ It only ever appears in one sequence:
 1. Flash the **EEPROM reset** build once and let the scooter boot. That one boot is what does the work.
 2. Flash a genuine, unmodified stock image over it.
 
-> **Never use V46 or V246 as that second step.** Both are themselves non-stock: they report their own version number over Bluetooth, run patched code and carry their own corrected wheel diameter and pack voltage bytes in place of the genuine factory ones. Finishing with either one leaves the scooter visibly modified again, no matter what the EEPROM now holds. Build the eraser and a genuine stock image as the pair they are meant to be.
+> **Never use V46 or V247 as that second step.** Both are themselves non-stock: they report their own version number over Bluetooth, run patched code and carry their own corrected wheel diameter and pack voltage bytes in place of the genuine factory ones. Finishing with either one leaves the scooter visibly modified again, no matter what the EEPROM now holds. Build the eraser and a genuine stock image as the pair they are meant to be.
 
 After the second step the program flash is the manufacturer's own image byte for byte and the settings block holds the factory values, so neither of the two carries anything left over from a patched build.
 
@@ -334,9 +334,9 @@ Patching the display is one option; the other is to patch the VCU application fi
 
 This NOP-the-clamp route drops the cap unconditionally. The [Laufbursche Firmware Patcher](https://laufbursche42.github.io/tr-fw/) instead redirects the four clamp sites to a small appended routine that reads a RAM lock flag at `0x20001B40`. Any non-zero value means open and the per-gear setpoint passes untouched; zero means locked and the routine caps the setpoint.
 
-The cap itself is not one number. The same routine sets a second RAM byte, `0x20001B41`, the first time the lock is opened after a power cycle. It reads that byte to choose between two caps: one for a scooter that has not been unlocked since it was switched on, one for a scooter that has. Both are chosen when the firmware is built, out of `0x13`, `0x14`, `0x15` and `0x16`. `0x14` measures around 455 rpm at the wheel. V246 clears bit5 rather than setting it and therefore reads the setpoint on the doubled scale, so it carries the same two caps multiplied by four and halves the result again after clamping.
+The cap itself is not one number. The same routine sets a second RAM byte, `0x20001B41`, the first time the lock is opened after a power cycle. It reads that byte to choose between two caps: one for a scooter that has not been unlocked since it was switched on, one for a scooter that has. Both are chosen when the firmware is built, out of `0x13`, `0x14`, `0x15` and `0x16`. `0x14` measures around 455 rpm at the wheel. V247 clears bit5 rather than setting it and therefore reads the setpoint on the doubled scale, so it carries the same two caps multiplied by two and clamps the setpoint on that scale with no halving afterwards. The earlier V246 multiplied by four and halved the result after clamping, which dropped every setpoint below the cap by half as well; V247 drops that halving so only the top stays capped.
 
-Bit5, the scale the controller reads the setpoint on, is left the way the factory instruction sets it in V46 and cleared always in V246. The lock flag itself is toggled live over Bluetooth with the direct lock command (cmd 0x1B), so one and the same firmware boots locked and unlocks or re-locks on demand with no re-flash and no FIN rename.
+Bit5, the scale the controller reads the setpoint on, is left the way the factory instruction sets it in V46 and cleared always in V247. The lock flag itself is toggled live over Bluetooth with the direct lock command (cmd 0x1B), so one and the same firmware boots locked and unlocks or re-locks on demand with no re-flash and no FIN rename.
 
 The clamp is unique to the R5 line: the four `movs r7, #0x16` caps appear in R5.4.19 but are absent from the R3, R2 and D-series VCU images, which ship unrestricted. Because the R3 and R5 images share the same Box C flash base (`0x08007000`) and the same MCU and peripheral map, flashing an unpatched open R3-line image onto an R5 VCU de-restricts it with no byte patch at all - the version number is only a client-side software lock: the name gate in the usual tooling just wants a version segment ending in "5", not a hardware difference. Your own stock image stays the recovery image to return to.
 

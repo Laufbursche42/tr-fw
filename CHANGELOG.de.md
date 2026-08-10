@@ -2,7 +2,7 @@
 
 Was sich am Patcher und an der gebauten Firmware ändert.
 
-Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Dieselbe Nummer plus 200 ist die Version für ältere Modelle ohne Kickstart ab Werk. Es gibt also V46 und V246. Der **EEPROM zurücksetzen**-Build meldet keine eigene Version über Bluetooth und trägt deshalb nirgends eine Nummer; seine Datei endet auf `_ee`.
+Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die Standardversion meldet V46, die Version für ältere Modelle ohne Kickstart ab Werk meldet V247 (sie lag bei V246, der Standardnummer plus 200, jetzt trägt sie den Sperr-Fix). Der **EEPROM zurücksetzen**-Build meldet keine eigene Version über Bluetooth und trägt deshalb nirgends eine Nummer; seine Datei endet auf `_ee`.
 
 ---
 
@@ -28,6 +28,12 @@ Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die
 
 ---
 
+## V247 auf einen Blick
+
+- **Die Version für ältere Controller halbiert den gesperrten Sollwert nicht mehr.** Bisher wurde er im gesperrten Zustand erst begrenzt und dann halbiert, wodurch nicht nur die Spitze, sondern jeder eingestellte Wert darunter auf die Hälfte gezogen wurde. Ein Roller mit eingetragenen 45, 60, 70, 80, 90 Prozent fuhr gesperrt entsprechend kraftlos, teils gar nicht mehr. Jetzt wird der Sollwert nur noch auf den eingestellten Wert geklemmt, ohne Halbierung. Die gesperrte Spitze bleibt dieselbe wie in V246, der Deckel selbst ist unverändert, es kommt weiter kein Gang über die Grenze, aber alles unterhalb läuft wieder mit vollem Zug statt halbiert. Nur die Version für ältere Controller ist betroffen, die Standardversion V46 bleibt unverändert.
+
+---
+
 ## V46 auf einen Blick
 
 - **Ein Befehl landete im falschen Handler.** Im Befehlsverteiler der Steuerung fehlt am Ende von Befehl 4 der Abbruch, dadurch lief er anschließend ungewollt auch noch in die Behandlung der RGB-Beleuchtung hinein. Ein Befehl 4 konnte damit die Beleuchtung verstellen. Der Compiler hatte an der Stelle ohnehin einen Leerbefehl stehen lassen, der Sprung passt also genau dorthin und nichts im Rest der Firmware verschiebt sich. Alles aus V45 bleibt unverändert enthalten.
@@ -47,7 +53,7 @@ Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die
 Es gibt zwei. Sie unterscheiden sich in dem, was die Steuerung dem Motorcontroller über die Sollwert-Skala sagt, sonst sind sie gleich.
 
 - **V46, Standard.** Der Normalfall. Die Skala bleibt so, wie der Controller sie ab Werk gesetzt bekommt.
-- **V246, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
+- **V247, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
 
 Die Wahl ist keine Einbahnstraße. Passt eine Version nicht, wählst du im Patcher eine andere und flashst erneut. Wie oft ein Controller geflasht werden darf, ist nicht begrenzt.
 
@@ -88,10 +94,10 @@ Beide Versionen enthalten:
 - Werksvorgaben sind 10 Zoll und 52 V. Fällt der Controller darauf zurück, fährt der Roller weiter statt in den Unterspannungsschutz zu laufen
 - Blinker-Fix, beim Bauen wählbar
 
-Nur die Version für ältere Controller (V246):
+Nur die Version für ältere Controller (V247):
 
 - Anfahren ohne Antreten (Kickstart) fest eingeschaltet
-- gesperrt wird der Sollwert zuerst begrenzt und dann halbiert. Deshalb hängt die gesperrte Höchstgeschwindigkeit am gewählten Gang: der oberste Gang läuft bis an die Grenze, die unteren Gänge bleiben darunter. So kommt kein Gang gesperrt über die Grenze
+- gesperrt wird der Sollwert auf den eingestellten Wert geklemmt, ohne ihn danach zu halbieren. Jeder Gang läuft gesperrt bis an dieselbe Grenze, keiner darüber; die eingestellten Werte werden gesperrt nicht mehr halbiert, der Roller kriecht also nicht mehr, sondern behält gesperrt seinen Zug bis an die Grenze
 
 ---
 

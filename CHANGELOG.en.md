@@ -2,7 +2,7 @@
 
 What changes in the patcher and in the firmware it builds.
 
-The version number is the stamp the firmware reports over Bluetooth. The same number plus 200 is the build for older models without a factory kickstart. So there is V46 and V246. The **EEPROM reset** build reports no version of its own over Bluetooth, so it carries no number anywhere; its file ends in `_ee`.
+The version number is the stamp the firmware reports over Bluetooth. The standard build reports V46, the build for older models without a factory kickstart reports V247 (it was V246, the standard number plus 200, now carrying the locked-speed fix). The **EEPROM reset** build reports no version of its own over Bluetooth, so it carries no number anywhere; its file ends in `_ee`.
 
 ---
 
@@ -28,6 +28,12 @@ The version number is the stamp the firmware reports over Bluetooth. The same nu
 
 ---
 
+## V247 at a glance
+
+- **The older-controller build no longer halves the locked setpoint.** It used to cap the setpoint while locked and then halve it, which pulled not only the top but every set value below the cap down to half. A scooter with 45, 60, 70, 80, 90 percent set ran that weakly while locked, in places not at all. Now the setpoint is only capped to the set value, with no halving. The locked top stays the same as in V246, the cap itself is unchanged, no gear runs over the limit, but everything below is back to full pull instead of halved. Only the older-controller build changes, the standard V46 stays as it was.
+
+---
+
 ## V46 at a glance
 
 - **One command reached the wrong handler.** In the controller's command dispatcher, command 4 ends without a break, so it then ran on into the handling of the RGB lighting as well. A command 4 could therefore change the lighting. The compiler had left an empty instruction in that exact spot, so the branch fits there and nothing else in the firmware moves. Everything from V45 is still in.
@@ -47,7 +53,7 @@ The version number is the stamp the firmware reports over Bluetooth. The same nu
 There are two. They differ in what the controller tells the motor controller about the setpoint scale, everything else is the same.
 
 - **V46, standard.** The normal case. The scale stays the way the controller gets it set from the factory.
-- **V246, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
+- **V247, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
 
 The choice is not one way. If a build does not suit, pick another one in the patcher and flash again. There is no limit on how often a controller may be flashed.
 
@@ -88,10 +94,10 @@ Both builds carry:
 - factory defaults are 10 inch and 52 V. If the controller falls back on them, the scooter keeps running instead of dropping into undervoltage protection
 - blinker fix, selectable when building
 
-The build for older controllers (V246) only:
+The build for older controllers (V247) only:
 
 - zero start (kickstart) permanently on
-- while locked the setpoint is capped first and then halved. The locked top speed therefore depends on the selected gear: the top gear runs up to the limit, the lower gears stay below it. That way no gear runs over the limit while locked
+- while locked the setpoint is capped to the set value without halving it afterwards. Every gear runs up to the same limit while locked, none over it; the set values are no longer halved when locked, so the scooter no longer crawls but keeps its pull up to the limit
 
 ---
 

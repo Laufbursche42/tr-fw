@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 
 var FW_BUILD = 46;
-var FW_BUILD_KICK = 246;
+var FW_BUILD_KICK = 247;
 // The eraser writes no version byte and its file is named by its own tag, so this
 // number stays inside the patcher and reaches nothing the rider sees.
 var FW_BUILD_ERASE = 147;
@@ -49,15 +49,17 @@ var PATCHES = {
   BLINKER: [
     [0x08019610, [0xFF,0xF7,0x90,0xFF], [0x00,0xBF,0x00,0xBF]],
   ],
-  // Clears the setpoint scale bit the four frame builders set, then halves the
-  // clamped setpoint to stay in the scale the controller then reads. The clamp
-  // itself keeps the shape core wrote, so the same two bytes carry the limit.
+  // Clears the setpoint scale bit the four frame builders set. The lock cap then
+  // holds in that scale through the clamp constant alone, which clampScale 2 puts
+  // on the doubled scale; nothing halves the whole setpoint any more. Halving it
+  // once dragged the rider's own speed setting below the cap down as well, so the
+  // scooter crawled or lost its throttle while locked; leaving the setpoint alone
+  // keeps everything below the cap at full response with only the top capped.
   KICKSTART: [
     [0x08010054, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x08010204, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x080103AC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
     [0x080105CC, [0x46,0xF0,0x20,0x06], [0x26,0xF0,0x20,0x06]],
-    [0x0801DD1A, [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x70,0x47,0x00,0xBF], [0x06,0x48,0x00,0x78,0x08,0xB1,0x14,0x20,0x00,0xE0,0x14,0x20,0x87,0x42,0x00,0xDD,0x07,0x46,0x7F,0x08,0x70,0x47]],
   ],
   WHEEL: [
     [0x0800D3B0, [0x80,0x79,0xAE,0x49], [0x10,0xF0,0xA4,0xBB]],
@@ -249,7 +251,7 @@ var VARIANTS = {
     key: "kickstart",
     stamp: FW_BUILD_KICK,
     groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS"],
-    clampScale: 4
+    clampScale: 2
   },
   eepromerase: {
     key: "eepromerase",

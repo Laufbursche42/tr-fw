@@ -39,7 +39,7 @@ Three builds, one at a time. Two of them unlock. Those two exclude each other, b
 - **V48** the normal case. It leaves the setpoint scale bit the way the controller gets it from the factory.
 - **V248** for older controllers that cannot switch their zero start off. On any other controller this one leaves the throttle dead.
 
-Those two let you pick the speed the scooter is clamped to while it is locked, as two separate numbers out of `19`, `20`, `21` and `22`: one that applies while the scooter has not been unlocked since it was switched on, one that applies after it has been unlocked and locked again. These are the firmware's own setpoint units, not km/h. `20` is the value every build so far shipped and measures 455 rpm at the wheel; what that turns into on the road depends on the scooter, which is why it can be set.
+Those two let you pick the speed the scooter is clamped to while it is locked, as two separate numbers out of `18`, `19`, `20`, `21` and `22`: one that applies while the scooter has not been unlocked since it was switched on, one that applies after it has been unlocked and locked again. These are the firmware's own setpoint units, not km/h. `20` is the value every build so far shipped and measures 455 rpm at the wheel; what that turns into on the road depends on the scooter, which is why it can be set.
 
 The third one unlocks nothing:
 

@@ -75,7 +75,7 @@ The built file comes out of the file you uploaded and carries that stock version
 
 ## Locked speed is yours to set
 
-When you build, you pick what the scooter is clamped to while it is locked. There are two fields, each offering 19, 20, 21 or 22:
+When you build, you pick what the scooter is clamped to while it is locked. There are two fields, each offering 18, 19, 20, 21 or 22:
 
 - **Never unlocked since power on.** Applies while the scooter has not run open since it was switched on.
 - **After unlocking and locking again.** Applies once it has been open, until it is next switched off.

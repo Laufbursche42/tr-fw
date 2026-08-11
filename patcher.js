@@ -116,7 +116,7 @@ var CLAMP_RELOCK_ADDR = 0x0801DD20;
 // Native setpoint units, not km/h. 20 measures 455 rpm at the wheel; what that
 // comes out as on the road differs from scooter to scooter, which is why the
 // value is offered at all. Nothing outside this list can be selected.
-var CLAMP_VALUES = [19, 20, 21, 22];
+var CLAMP_VALUES = [18, 19, 20, 21, 22];
 var CLAMP_DEFAULT = 21;
 
 function crc16Modbus(bytes) {

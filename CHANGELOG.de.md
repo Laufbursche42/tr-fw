@@ -75,7 +75,7 @@ Die gebaute Datei entsteht aus deiner hochgeladenen Datei und trägt deren Serie
 
 ## Gesperrte Geschwindigkeit einstellbar
 
-Beim Bauen wählst du, worauf der Roller geklemmt wird, solange er gesperrt ist. Es sind zwei Felder mit jeweils 19, 20, 21 oder 22:
+Beim Bauen wählst du, worauf der Roller geklemmt wird, solange er gesperrt ist. Es sind zwei Felder mit jeweils 18, 19, 20, 21 oder 22:
 
 - **Seit dem Einschalten nie entsperrt.** Gilt, solange der Roller seit dem Einschalten noch nicht offen gefahren ist.
 - **Nach Entsperren und wieder Sperren.** Gilt, sobald er einmal offen war, bis er das nächste Mal ausgeschaltet wird.

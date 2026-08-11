@@ -17,8 +17,8 @@
 // depending on where in flash the site sits, which is why the map is a table.
 // ---------------------------------------------------------------------------
 
-var FW_BUILD = 46;
-var FW_BUILD_KICK = 247;
+var FW_BUILD = 48;
+var FW_BUILD_KICK = 248;
 // The eraser writes no version byte and its file is named by its own tag, so this
 // number stays inside the patcher and reaches nothing the rider sees.
 var FW_BUILD_ERASE = 147;
@@ -70,6 +70,15 @@ var PATCHES = {
     [0x0801D78F, [0x6E], [0x64]],
     [0x0801D792, [0x30], [0x2A]],
     [0x0801D793, [0x3C], [0x34]],
+  ],
+  // Locked, the display recomputes speed from the wheel byte (CORE pins it to 10)
+  // and the rotation duration, so it reads high. This scales the sent duration by
+  // 100/W (W = real wheel 0x2000029D) so the display computes the real speed still.
+  DURCOMP: [
+    [0x0801078E, [0x5A,0x48,0x00,0x88], [0x0D,0xF0,0xFB,0xBA]],
+    [0x08010ABA, [0xAC,0x48,0x00,0x88], [0x0D,0xF0,0x7B,0xB9]],
+    [0x0801DD88, null, [0x07,0x4A,0x12,0x88,0x07,0x4B,0x1B,0x78,0x2B,0xB9,0x64,0x20,0x42,0x43,0x06,0x4B,0x1B,0x78,0xB2,0xFB,0xF3,0xF2,0x10,0x0A,0x08,0x72,0x4A,0x72,0xF2,0xF7,0xFA,0xBC,0xE4,0x02,0x00,0x20,0x40,0x1B,0x00,0x20,0x9D,0x02,0x00,0x20]],
+    [0x0801DDB4, null, [0x07,0x4A,0x12,0x88,0x07,0x4B,0x1B,0x78,0x2B,0xB9,0x64,0x20,0x42,0x43,0x06,0x4B,0x1B,0x78,0xB2,0xFB,0xF3,0xF2,0x10,0x0A,0x08,0x72,0x4A,0x72,0xF2,0xF7,0x7A,0xBE,0xDA,0x02,0x00,0x20,0x40,0x1B,0x00,0x20,0x9D,0x02,0x00,0x20]],
   ],
   // Restores the stored ride settings to the factory table: the call site goes
   // to a cave that flips one bit in each of the five block bytes the checksum
@@ -232,10 +241,10 @@ function buildHex(img) {
 }
 
 // The builds, each one on its own. Standard and kickstart carry the lock, the
-// wheel size handling, the corrected factory defaults and the optional blinker
-// fix. Nothing here pushes values between the controller and the display: the
-// display owns the settings the way it does from the factory and anything that
-// force-fed it made the two fight.
+// wheel size handling, its display compensation, the corrected factory defaults
+// and the optional blinker fix. Locked the display still shows 10 inch and
+// computes its own speed from it; the compensation scales the sent rotation
+// duration so that computation lands on the real value instead of reading high.
 // clampScale is the factor between a build's own setpoint scale and the plain
 // one, so the same selected limit means the same speed in either of those two.
 // The eraser is stock plus the one call that clears the stored ride settings,
@@ -244,13 +253,13 @@ var VARIANTS = {
   standard: {
     key: "standard",
     stamp: FW_BUILD,
-    groups: ["CORE", "WHEEL", "DEFAULTS"],
+    groups: ["CORE", "WHEEL", "DEFAULTS", "DURCOMP"],
     clampScale: 1
   },
   kickstart: {
     key: "kickstart",
     stamp: FW_BUILD_KICK,
-    groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS"],
+    groups: ["CORE", "WHEEL", "KICKSTART", "DEFAULTS", "DURCOMP"],
     clampScale: 2
   },
   eepromerase: {
@@ -311,7 +320,9 @@ var BASES = {
       0x08019610: 0x080196F0,
       0x0801D78F: 0x0801D86F,
       0x0801D792: 0x0801D872,
-      0x0801D793: 0x0801D873
+      0x0801D793: 0x0801D873,
+      0x0801078E: 0x08010876,
+      0x08010ABA: 0x08010B9A
     },
     ret: {
       0x0800D2CA: 0x0800D2D6,
@@ -332,7 +343,9 @@ var BASES = {
       0x0801700C: 0x080170EC,
       0x0801720A: 0x080172EA,
       0x08017264: 0x08017344,
-      0x08017C68: 0x08017D48
+      0x08017C68: 0x08017D48,
+      0x0801079C: 0x08010884,
+      0x08010AC8: 0x08010BA8
     },
     // Five sites load a variable through a pc relative offset that R5.4.21 sizes
     // differently, so the stock bytes to expect there are not the R5.4.19 ones.
@@ -343,7 +356,9 @@ var BASES = {
       0x0800F8B0: [0x7B,0x48,0x00,0x78,0xD8,0xB9],
       0x0800FCFA: [0x00,0x20,0x9B,0x49,0x08,0x70],
       0x0801083C: [0xF6,0x48,0x00,0x78],
-      0x08010B64: [0x5D,0x48,0x00,0x78]
+      0x08010B64: [0x5D,0x48,0x00,0x78],
+      0x0801078E: [0x49,0x48,0x00,0x88],
+      0x08010ABA: [0xA1,0x48,0x00,0x88]
     },
     lit: {
       0x0801DB9C: 0x2000030A,
@@ -352,7 +367,9 @@ var BASES = {
       0x0801DC7C: 0x20000306,
       0x0801DC80: 0x2000030A,
       0x0801DCC8: 0x20000306,
-      0x0801DD84: 0x2000030A
+      0x0801DD84: 0x2000030A,
+      0x0801DDA8: 0x200002DC,
+      0x0801DDD4: 0x200002DC
     }
   }
 };

@@ -2,7 +2,13 @@
 
 Was sich am Patcher und an der gebauten Firmware ändert.
 
-Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die Standardversion meldet V46, die Version für ältere Modelle ohne Kickstart ab Werk meldet V247 (sie lag bei V246, der Standardnummer plus 200, jetzt trägt sie den Sperr-Fix). Der **EEPROM zurücksetzen**-Build meldet keine eigene Version über Bluetooth und trägt deshalb nirgends eine Nummer; seine Datei endet auf `_ee`.
+Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die Standardversion meldet V48, die Version für ältere Modelle ohne Kickstart ab Werk meldet V248 (die Standardnummer plus 200). Der **EEPROM zurücksetzen**-Build meldet keine eigene Version über Bluetooth und trägt deshalb nirgends eine Nummer; seine Datei endet auf `_ee`.
+
+---
+
+## V48 und V248 auf einen Blick
+
+- **Das gesperrte Display zeigt jetzt die echte Geschwindigkeit und steht dabei weiter auf 10 Zoll.** Das Display druckt die Radgröße nicht nur ab, es rechnet seine Geschwindigkeit selbst aus dieser Größe und der Radumdrehungsdauer, die die Steuerung ihm schickt. Bisher setzte die Sperre das Rad für beides auf 10 Zoll, ein Roller mit kleinerem echten Rad las seine gesperrte Geschwindigkeit auf dem Display also zu hoch ab. Jetzt skaliert die Steuerung im gesperrten Zustand die gesendete Umdrehungsdauer mit dem echten Rad gegen 10, das Display zeigt für die Kontrolle am Straßenrand weiter 10, rechnet die Geschwindigkeit aber so, als liefe das echte Rad. Entsperrt ändert sich nichts: das Display bekommt die unveränderte Dauer und die von dir gesetzte Radgröße. Beide Builds bekommen das, die Standardversion V48 und die Version für ältere Controller V248. Alles aus V46 und V247 bleibt enthalten.
 
 ---
 
@@ -52,8 +58,8 @@ Die Versionsnummer ist der Stempel, den die Firmware über Bluetooth meldet. Die
 
 Es gibt zwei. Sie unterscheiden sich in dem, was die Steuerung dem Motorcontroller über die Sollwert-Skala sagt, sonst sind sie gleich.
 
-- **V46, Standard.** Der Normalfall. Die Skala bleibt so, wie der Controller sie ab Werk gesetzt bekommt.
-- **V247, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
+- **V48, Standard.** Der Normalfall. Die Skala bleibt so, wie der Controller sie ab Werk gesetzt bekommt.
+- **V248, ältere Controller.** Nur für Roller, die ab Werk nicht ohne Antreten anfahren, bei denen sich Kickstart also gar nicht abschalten lässt. Auf allen anderen nimmt der Roller mit dieser Version kein Gas mehr an.
 
 Die Wahl ist keine Einbahnstraße. Passt eine Version nicht, wählst du im Patcher eine andere und flashst erneut. Wie oft ein Controller geflasht werden darf, ist nicht begrenzt.
 
@@ -63,7 +69,7 @@ Die Wahl ist keine Einbahnstraße. Passt eine Version nicht, wählst du im Patch
 
 R5.4.19 und R5.4.21. Erkannt wird der Inhalt des Abbilds, nicht der Dateiname, eine anders formatierte Hex-Datei derselben Firmware geht also genauso durch.
 
-Die gebaute Datei entsteht aus deiner hochgeladenen Datei und trägt deren Serienstand im Namen, `AWIVCU_APP_R5_4_19_V46.hex` oder `AWIVCU_APP_R5_4_21_V46.hex`. So lassen sich mehrere heruntergeladene Dateien im selben Ordner auf einen Blick auseinanderhalten und die richtige landet auf dem richtigen Roller.
+Die gebaute Datei entsteht aus deiner hochgeladenen Datei und trägt deren Serienstand im Namen, `AWIVCU_APP_R5_4_19_V48.hex` oder `AWIVCU_APP_R5_4_21_V48.hex`. So lassen sich mehrere heruntergeladene Dateien im selben Ordner auf einen Blick auseinanderhalten und die richtige landet auf dem richtigen Roller.
 
 ---
 
@@ -94,7 +100,7 @@ Beide Versionen enthalten:
 - Werksvorgaben sind 10 Zoll und 52 V. Fällt der Controller darauf zurück, fährt der Roller weiter statt in den Unterspannungsschutz zu laufen
 - Blinker-Fix, beim Bauen wählbar
 
-Nur die Version für ältere Controller (V247):
+Nur die Version für ältere Controller (V248):
 
 - Anfahren ohne Antreten (Kickstart) fest eingeschaltet
 - gesperrt wird der Sollwert auf den eingestellten Wert geklemmt, ohne ihn danach zu halbieren. Jeder Gang läuft gesperrt bis an dieselbe Grenze, keiner darüber; die eingestellten Werte werden gesperrt nicht mehr halbiert, der Roller kriecht also nicht mehr, sondern behält gesperrt seinen Zug bis an die Grenze

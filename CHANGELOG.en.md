@@ -2,7 +2,13 @@
 
 What changes in the patcher and in the firmware it builds.
 
-The version number is the stamp the firmware reports over Bluetooth. The standard build reports V46, the build for older models without a factory kickstart reports V247 (it was V246, the standard number plus 200, now carrying the locked-speed fix). The **EEPROM reset** build reports no version of its own over Bluetooth, so it carries no number anywhere; its file ends in `_ee`.
+The version number is the stamp the firmware reports over Bluetooth. The standard build reports V48, the build for older models without a factory kickstart reports V248 (the standard number plus 200). The **EEPROM reset** build reports no version of its own over Bluetooth, so it carries no number anywhere; its file ends in `_ee`.
+
+---
+
+## V48 and V248 at a glance
+
+- **The locked display now reads the true speed while still showing 10 inch.** The display does not just print the wheel size, it works its own speed out from that size and the wheel-rotation time the controller feeds it. Until now locking pinned the wheel to 10 inch for both, so a scooter whose real wheel is smaller than 10 read its locked speed too high on the display. Now, while locked, the controller scales the rotation time it sends by the real wheel against 10, so the display still shows 10 for a roadside reading but computes the speed as if it ran the real wheel. Unlocked nothing changes: the display gets the untouched time and the wheel size you set. Both builds get this, the standard V48 and the older-controller V248. Everything from V46 and V247 is still in.
 
 ---
 
@@ -52,8 +58,8 @@ The version number is the stamp the firmware reports over Bluetooth. The standar
 
 There are two. They differ in what the controller tells the motor controller about the setpoint scale, everything else is the same.
 
-- **V46, standard.** The normal case. The scale stays the way the controller gets it set from the factory.
-- **V247, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
+- **V48, standard.** The normal case. The scale stays the way the controller gets it set from the factory.
+- **V248, older controllers.** Only for scooters that do not pull away without a kick from the factory, meaning the kickstart cannot be switched off at all. On every other scooter this build makes the throttle stop responding.
 
 The choice is not one way. If a build does not suit, pick another one in the patcher and flash again. There is no limit on how often a controller may be flashed.
 
@@ -63,7 +69,7 @@ The choice is not one way. If a build does not suit, pick another one in the pat
 
 R5.4.19 and R5.4.21. What is recognised is the content of the image, not the file name, so a differently formatted hex of the same firmware passes just as well.
 
-The built file comes out of the file you uploaded and carries that stock version in its name, `AWIVCU_APP_R5_4_19_V46.hex` or `AWIVCU_APP_R5_4_21_V46.hex`. So several downloaded builds in one folder stay apart at a glance and the right one goes on the right scooter.
+The built file comes out of the file you uploaded and carries that stock version in its name, `AWIVCU_APP_R5_4_19_V48.hex` or `AWIVCU_APP_R5_4_21_V48.hex`. So several downloaded builds in one folder stay apart at a glance and the right one goes on the right scooter.
 
 ---
 
@@ -94,7 +100,7 @@ Both builds carry:
 - factory defaults are 10 inch and 52 V. If the controller falls back on them, the scooter keeps running instead of dropping into undervoltage protection
 - blinker fix, selectable when building
 
-The build for older controllers (V247) only:
+The build for older controllers (V248) only:
 
 - zero start (kickstart) permanently on
 - while locked the setpoint is capped to the set value without halving it afterwards. Every gear runs up to the same limit while locked, none over it; the set values are no longer halved when locked, so the scooter no longer crawls but keeps its pull up to the limit

@@ -61,6 +61,36 @@ if [ -n "$dash_blocked" ]; then
 fi
 
 # =================================================================
+# PHASE 0B - auto-bump the cache-buster (BUILD in the main script + all ?v= in index.html)
+# =================================================================
+# These files ship with no build step, so a stale browser cache is the only thing between a
+# tester and a fix. On any web-asset change bump the single version N, unless it was bumped by hand.
+MAIN=""
+for c in page.js app.js; do
+  if [ -f "$c" ] && grep -qE "^(const|var) BUILD *= *['\"]v[0-9]" "$c"; then MAIN="$c"; break; fi
+done
+if [ -n "$MAIN" ] && git diff --cached --name-only 2>/dev/null | grep -qE '\.(js|css|html)$'; then
+  vnum() { git show "$1" 2>/dev/null | sed -n "s/^\(const\|var\) BUILD *= *['\"]v\([0-9][0-9]*\)['\"].*/\2/p"; }
+  OLD_B=$(vnum "HEAD:$MAIN"); ST_B=$(vnum ":$MAIN")
+  if [ -n "$OLD_B" ] && [ -n "$ST_B" ]; then
+    if [ "$ST_B" = "$OLD_B" ]; then NEW_B=$((OLD_B + 1)); else NEW_B="$ST_B"; fi
+    bump_block=0
+    for f in "$MAIN" index.html; do
+      [ -f "$f" ] || continue
+      git diff --quiet -- "$f" 2>/dev/null && continue
+      echo "BLOCK: $f needs a cache-buster bump but also has UNSTAGED changes -> stage the whole file first."
+      RC=1; bump_block=1
+    done
+    if [ "$bump_block" -eq 0 ]; then
+      perl -i -pe "s/(BUILD *= *['\"]v)[0-9]+/\${1}$NEW_B/" "$MAIN"; git add "$MAIN"
+      if [ -f index.html ]; then perl -i -pe "s/\?v=[0-9]+/?v=$NEW_B/g" index.html; git add index.html; fi
+      echo "  auto-bumped cache-buster -> v$NEW_B ($MAIN + index.html)"
+    fi
+  fi
+fi
+
+
+# =================================================================
 # PHASE A - syntax checks
 # =================================================================
 # Node snippet: extract every inline <script> WITHOUT src= from an HTML file.

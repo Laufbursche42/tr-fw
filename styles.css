@@ -363,5 +363,4 @@ footer a { color: var(--accent); }
 .foot-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem 1rem; }
 .build-id { font: .84rem/1.4 var(--mono); color: var(--dim); letter-spacing: .06em;
   white-space: nowrap; }
-.foot-copy { color: var(--label); font-size: .8rem; }
 [hidden] { display: none !important; }

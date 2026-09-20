@@ -16,6 +16,9 @@
   --good:      #1EE89A;
   --warn:      #FFAA18;
   --danger:    #FF5050;
+  --bad-bg:    #FF505014;
+  --bad-line:  #FF505040;
+  --bad-strong:#ff8080;
   --radius:    12px;
   --scroll:    #2B3350;
   --field:     #0D1018;
@@ -39,11 +42,18 @@
   --good:      #1B7A4B;
   --warn:      #A05800;
   --danger:    #CC2020;
+  --bad-strong:#A01818;
   --scroll:    #B6C0D4;
   --field:     #F1F4FA;
   --backdrop:  rgba(10,13,24,.45);
 }
 * { box-sizing: border-box; }
+
+/* Deprecation banner: red tone, always visible, cannot be dismissed. */
+.sunset-banner { background: var(--bad-bg); border: 1px solid var(--bad-line); border-radius: 10px;
+  padding: 11px 14px; font-size: 12px; line-height: 1.5; color: var(--text); }
+.sunset-banner b { color: var(--bad-strong); }
+.sunset-banner a { color: var(--bad-strong); text-decoration: underline; }
 
 /* Slim scrollbars in the colours of the page. Firefox and Chromium both honour the
    standard properties, so they end up looking the same. */

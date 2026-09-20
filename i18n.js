@@ -6,6 +6,7 @@
 window.I18N = {
   de: {
     lede: "Baut aus der Serien-Firmware deines Rollers eine Laufbursche-Firmware. <b>Nur für den Teverun Fighter Mini in der eKFV-Ausführung, für kein anderes Gerät.</b>",
+    sunsetBannerHtml: "<b>Dieses Tool zieht um.</b> Dieses Repo wird <b>nicht mehr weiterentwickelt</b> - bitte wechsle zum neuen Tool: <a href=\"https://lb-webpatcher.laufbursche.workers.dev/\" target=\"_blank\" rel=\"noopener\">lb-webpatcher.laufbursche.workers.dev</a>. Probleme beim Wechsel? Öffne ein <a href=\"https://github.com/Laufbursche42/Laufbursche42/issues/new\" target=\"_blank\" rel=\"noopener\">Issue auf GitHub</a> oder schick eine <a href=\"https://www.escooter-stammtisch.de/index.php?user/6497-laufbursche/\" target=\"_blank\" rel=\"noopener\">PN im eScooter-Stammtisch</a>.",
     ledePrivacy: "Alles passiert in diesem Browser, es wird nichts hochgeladen und nichts gespeichert.",
 
     eeBtn: "EEPROM prüfen",
@@ -239,6 +240,7 @@ window.I18N = {
 
   en: {
     lede: "Builds a Laufbursche firmware from your scooter's stock firmware. <b>For the Teverun Fighter Mini in its eKFV version only, for no other device.</b>",
+    sunsetBannerHtml: "<b>This tool is moving.</b> This repository is <b>no longer maintained</b> - please switch to the new tool: <a href=\"https://lb-webpatcher.laufbursche.workers.dev/\" target=\"_blank\" rel=\"noopener\">lb-webpatcher.laufbursche.workers.dev</a>. Trouble switching? Open an <a href=\"https://github.com/Laufbursche42/Laufbursche42/issues/new\" target=\"_blank\" rel=\"noopener\">issue on GitHub</a> or send a <a href=\"https://www.escooter-stammtisch.de/index.php?user/6497-laufbursche/\" target=\"_blank\" rel=\"noopener\">PM on the eScooter-Stammtisch forum</a>.",
     ledePrivacy: "Everything happens in this browser; nothing is uploaded and nothing is stored.",
 
     eeBtn: "Check your EEPROM",

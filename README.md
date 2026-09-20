@@ -1,3 +1,5 @@
+> 🚨 **This tool is moving.** This repository is **no longer maintained** - please switch to the new tool: **[lb-webpatcher.laufbursche.workers.dev](https://lb-webpatcher.laufbursche.workers.dev/)**. Trouble switching? Open an [issue on GitHub](https://github.com/Laufbursche42/Laufbursche42/issues/new) or send a [PM on the eScooter-Stammtisch forum](https://www.escooter-stammtisch.de/index.php?user/6497-laufbursche/).
+
 # Laufbursche Firmware Patcher
 
 A web page that builds a Laufbursche firmware for the **Teverun Fighter Mini (eKFV)** from the stock firmware of your own scooter.

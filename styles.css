@@ -98,6 +98,9 @@ body {
 
 .lede { color: var(--label); margin: 0 0 .7rem; }
 .lede:last-of-type { margin-bottom: 2rem; }
+.intro-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; margin: 0 0 2rem; }
+.intro-card h2 { margin: 0 0 .7rem; }
+.intro-card .lede:last-of-type { margin-bottom: 0; }
 
 .step { margin-bottom: 1.75rem; }
 .step-head { display: flex; align-items: baseline; gap: .55rem; margin-bottom: .65rem; }

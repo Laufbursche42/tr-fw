@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <!-- No frame-ancestors here: a browser ignores it in a meta element, it only works as an
      HTTP header. GitHub Pages sends no custom headers, so it would only log a warning. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; img-src 'self'; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Laufbursche Firmware Patcher</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="favicon-180.png">
 
 <link rel="stylesheet" href="styles.css?v=45">
+<!-- Cloudflare Web Analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "1f2a3915448b4b68b4380423f2be4b09"}'></script><!-- scan-ok: Cloudflare Web Analytics beacon (token starts 1f2a39 ends 4b09); cookieless aggregate page metrics, see PRIVACY -->
 </head>
 <body>
 <div class="wrap">

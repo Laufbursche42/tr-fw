@@ -11,7 +11,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="favicon-180.png">
 
-<link rel="stylesheet" href="styles.css?v=45">
+<link rel="stylesheet" href="styles.css?v=46">
 <!-- Cloudflare Web Analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "1f2a3915448b4b68b4380423f2be4b09"}'></script><!-- scan-ok: Cloudflare Web Analytics beacon (token starts 1f2a39 ends 4b09); cookieless aggregate page metrics, see PRIVACY -->
 </head>
 <body>
@@ -28,6 +28,13 @@
     </div>
   </div>
 
+  <div class="sunset-overlay" id="sunset-overlay" role="dialog" aria-modal="true" aria-labelledby="sunset-ov-title">
+    <div class="sunset-box">
+      <h2 class="sunset-title" id="sunset-ov-title" data-t="sunsetTitle"></h2>
+      <div class="sunset-text" data-t="sunsetBannerHtml"></div>
+      <button type="button" class="sunset-dismiss" id="sunset-overlay-x" data-t="sunsetDismiss"></button>
+    </div>
+  </div>
   <div class="sunset-banner" role="alert" data-t="sunsetBannerHtml"></div>
 
   <section class="intro-card">
@@ -176,9 +183,9 @@
   </div>
 </dialog>
 
-<script src="patcher.js?v=45"></script>
-<script src="i18n.js?v=45"></script>
-<script src="ble.js?v=45"></script>
-<script src="page.js?v=45"></script>
+<script src="patcher.js?v=46"></script>
+<script src="i18n.js?v=46"></script>
+<script src="ble.js?v=46"></script>
+<script src="page.js?v=46"></script>
 </body>
 </html>

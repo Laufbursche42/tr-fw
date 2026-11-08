@@ -393,3 +393,7 @@ footer a { color: var(--accent); }
   border-radius: 10px; background: var(--bad-strong); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
 .sunset-dismiss:hover { filter: brightness(1.08); }
 body.sunset-locked { overflow: hidden; }
+
+/* CLS-FIX-APPENDED: reserve layout so nothing grows/reflows after load (see _cls-fix recipe) */
+html { scrollbar-gutter: stable; }
+.sunset-box { min-height: 13.5rem; box-sizing: border-box; }

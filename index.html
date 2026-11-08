@@ -30,99 +30,99 @@
 
   <div class="sunset-overlay" id="sunset-overlay" role="dialog" aria-modal="true" aria-labelledby="sunset-ov-title">
     <div class="sunset-box">
-      <h2 class="sunset-title" id="sunset-ov-title" data-t="sunsetTitle"></h2>
-      <div class="sunset-text" data-t="sunsetBannerHtml"></div>
-      <button type="button" class="sunset-dismiss" id="sunset-overlay-x" data-t="sunsetDismiss"></button>
+      <h2 class="sunset-title" id="sunset-ov-title" data-t="sunsetTitle">Dieses Tool zieht um</h2>
+      <div class="sunset-text" data-t="sunsetBannerHtml"><b>Dieses Tool zieht um.</b> Dieses Repo wird <b>nicht mehr weiterentwickelt</b> - bitte wechsle zum neuen Tool: <a href="https://lb-webpatcher.pages.dev/" target="_blank" rel="noopener">lb-webpatcher.pages.dev</a>. Probleme beim Wechsel? Öffne ein <a href="https://github.com/Laufbursche42/Laufbursche42/issues/new" target="_blank" rel="noopener">Issue auf GitHub</a> oder schick eine <a href="https://www.escooter-stammtisch.de/index.php?user/6497-laufbursche/" target="_blank" rel="noopener">PN im eScooter-Stammtisch</a>.</div>
+      <button type="button" class="sunset-dismiss" id="sunset-overlay-x" data-t="sunsetDismiss">Verstanden, weiter zur Seite</button>
     </div>
   </div>
-  <div class="sunset-banner" role="alert" data-t="sunsetBannerHtml"></div>
+  <div class="sunset-banner" role="alert" data-t="sunsetBannerHtml"><b>Dieses Tool zieht um.</b> Dieses Repo wird <b>nicht mehr weiterentwickelt</b> - bitte wechsle zum neuen Tool: <a href="https://lb-webpatcher.pages.dev/" target="_blank" rel="noopener">lb-webpatcher.pages.dev</a>. Probleme beim Wechsel? Öffne ein <a href="https://github.com/Laufbursche42/Laufbursche42/issues/new" target="_blank" rel="noopener">Issue auf GitHub</a> oder schick eine <a href="https://www.escooter-stammtisch.de/index.php?user/6497-laufbursche/" target="_blank" rel="noopener">PN im eScooter-Stammtisch</a>.</div>
 
   <section class="intro-card">
-    <h2 class="step-title" data-t="introTitle"></h2>
-    <p class="lede" data-t="lede"></p>
-    <p class="lede" data-t="ledePrivacy"></p>
+    <h2 class="step-title" data-t="introTitle">So fängst du an</h2>
+    <p class="lede" data-t="lede">Baut aus der Serien-Firmware deines Rollers eine Laufbursche-Firmware. <b>Nur für den Teverun Fighter Mini in der eKFV-Ausführung, für kein anderes Gerät.</b></p>
+    <p class="lede" data-t="ledePrivacy">Alles passiert in diesem Browser, es wird nichts hochgeladen und nichts gespeichert.</p>
   </section>
 
   <!-- Outside the numbered steps on purpose: reading the EEPROM has nothing to do with
        which build is being put together, it is run once before a flash and once after. -->
   <section class="eecheck">
-    <p class="ee-intro" data-t="eeIntro"></p>
-    <button type="button" class="ee-btn" id="eeBtn" data-t="eeBtn"></button>
-    <p class="hint" id="eeNoBt" data-t="eeUnsupported" hidden></p>
+    <p class="ee-intro" data-t="eeIntro">Liest über Bluetooth aus, welche Einstellungen dein Roller gerade gespeichert hat, egal ob du auf der Flash-Seite oder aus einer App geflasht hast. Gedacht ist das vor allem für 'EEPROM zurücksetzen': einmal vorher nachsehen, was im EEPROM steht, einmal nachher, zum Vergleich. Funktioniert in Chrome und Edge sowie in Chrome auf Android; auf dem iPhone und iPad nur mit einem eigenen Bluetooth-Browser wie <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055" target="_blank" rel="noopener">Bluefy</a>, nicht mit Safari, Chrome oder Firefox dort. Diese Seite liest nur und schreibt nichts auf den Roller.</p>
+    <button type="button" class="ee-btn" id="eeBtn" data-t="eeBtn">EEPROM prüfen</button>
+    <p class="hint" id="eeNoBt" data-t="eeUnsupported" hidden>Dieser Browser kann kein Web Bluetooth. Nötig ist Chrome oder Edge auf Windows, macOS und Linux, Chrome auf Android oder <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055" target="_blank" rel="noopener">Bluefy</a> auf iPhone und iPad. Safari kann es nicht, Chrome und Firefox auf dem iPhone auch nicht, die laufen dort technisch alle auf Safaris Unterbau.</p>
   </section>
 
   <section class="step">
-    <div class="step-head"><span class="step-num">01</span><h2 class="step-title" data-t="s1"></h2></div>
+    <div class="step-head"><span class="step-num">01</span><h2 class="step-title" data-t="s1">Firmware-Upload</h2></div>
     <div id="drop" tabindex="0" role="button">
-      <strong data-t="dropTitle"></strong>
-      <span data-t="dropSub"></span>
+      <strong data-t="dropTitle">Hex-Datei hierher ziehen oder klicken</strong>
+      <span data-t="dropSub">Teverun IVCU R5.4.19 oder R5.4.21 als .hex oder .txt</span>
     </div>
     <!-- No accept filter on purpose: iOS resolves it to its own file types, does not know
          .hex and greys the file out. What counts is the content check in identify(). -->
     <input type="file" id="file">
-    <p class="hint" data-t="uploadHint"></p>
-    <p class="hint" data-t="iosHint"></p>
+    <p class="hint" data-t="uploadHint">Diese Seite liefert keine Firmware mit. Die passende IVCU-Firmware findest du im Internet, zum Beispiel <a href="https://github.com/spooonky/Teverun-Fighter-Mini-Pro-Eco-eKFV-Firmware" target="_blank" rel="noopener">hier</a>. Auch dein Händler kann sie dir zusenden. Hast du eine Firmware, die hier noch nicht angenommen wird, öffne bitte ein <a href="https://github.com/Laufbursche42/tr-fw/issues" target="_blank" rel="noopener">Ticket</a> und häng sie dort an, dann bauen wir unsere Patches auch dafür.</p>
+    <p class="hint" data-t="iosHint"><b>Auf dem iPhone:</b> lässt sich deine Datei in der Auswahl nicht antippen, benenn sie in <b>.txt</b> um. Am Inhalt ändert das nichts und die Seite liest ihn genauso, denn geprüft wird das Abbild selbst, nie der Dateiname.</p>
     <div id="check" aria-live="polite"></div>
   </section>
 
   <div id="patchable">
     <section class="step">
-      <div class="step-head"><span class="step-num">02</span><h2 class="step-title" data-t="s2"></h2></div>
+      <div class="step-head"><span class="step-num">02</span><h2 class="step-title" data-t="s2">Controller</h2></div>
       <!-- Options and the description below are filled by the script, so the version number
            and the wording follow the language without two places to keep in step. -->
-      <p class="pick-help" data-t="varHelp"></p>
+      <p class="pick-help" data-t="varHelp">Welche Version passt zu dir?</p>
       <ul class="pick-guide" id="varGuide"></ul>
       <label class="pick">
-        <span class="pick-label" data-t="varPick"></span>
+        <span class="pick-label" data-t="varPick">Version</span>
         <select id="variant"></select>
       </label>
-      <h3 class="feat-title" data-t="featTitle"></h3>
+      <h3 class="feat-title" data-t="featTitle">Was drin ist</h3>
       <ul class="features" id="featureList"></ul>
     </section>
 
-    <p class="note" data-t="detailsNote"></p>
+    <p class="note" data-t="detailsNote">Was sich gegenüber der letzten Version geändert hat, steht im <a id="detailsLink" href="CHANGELOG.de.md" data-doc="CHANGELOG" data-doc-title="changelog">Changelog für Firmware</a>.</p>
 
     <section class="step" id="stepClamp">
-      <div class="step-head"><span class="step-num">03</span><h2 class="step-title" data-t="s3"></h2></div>
-      <p class="pick-help" data-t="clampHelp"></p>
+      <div class="step-head"><span class="step-num">03</span><h2 class="step-title" data-t="s3">Gesperrte Geschwindigkeit</h2></div>
+      <p class="pick-help" data-t="clampHelp">Worauf soll der Roller geklemmt werden, solange er gesperrt ist?</p>
       <label class="pick">
-        <span class="pick-label" data-t="clampStockLabel"></span>
+        <span class="pick-label" data-t="clampStockLabel">Seit dem Einschalten nie entsperrt</span>
         <select id="clampStock"></select>
       </label>
       <label class="pick">
-        <span class="pick-label" data-t="clampRelockLabel"></span>
+        <span class="pick-label" data-t="clampRelockLabel">Nach Entsperren und wieder Sperren</span>
         <select id="clampRelock"></select>
       </label>
-      <p class="hint" data-t="clampNote"></p>
+      <p class="hint" data-t="clampNote">Das sind die Werte, mit denen die Firmware selbst rechnet, keine km/h. Bisher stand hier fest die 20, gemessen 455 U/min am Rad. Was daraus auf der Straße wird, hängt an Reifen, Gewicht und eingestellter Radgröße. Derselbe Wert ergibt deshalb nicht auf jedem Roller dieselbe Geschwindigkeit: mit einer eingestellten 22 läuft der eine gesperrt über die erlaubten 22 km/h, der nächste bleibt darunter. Vorhersagen lässt sich das nicht, es hilft nur nachmessen. Ein höherer Wert macht schneller, ein niedrigerer langsamer. Zwei Felder gibt es, weil der Controller nach einem Entsperren bis zum nächsten Ausschalten oft etwas höher klemmt als beim Losfahren.</p>
     </section>
 
     <section class="step" id="stepBlinker">
-      <div class="step-head"><span class="step-num">04</span><h2 class="step-title" data-t="s4"></h2></div>
+      <div class="step-head"><span class="step-num">04</span><h2 class="step-title" data-t="s4">Optionen</h2></div>
       <label class="opt">
         <input type="checkbox" id="blinker">
-        <span><b data-t="blinkerTitle"></b><p data-t="blinkerText"></p></span>
+        <span><b data-t="blinkerTitle">Blinker-Fix</b><p data-t="blinkerText">Nur wichtig, wenn dein Blinker dauerhaft leuchtet statt zu blinken. In der Regel passiert das nur bei Scootern, bei denen keine Blinkerbox verbaut ist.</p></span>
       </label>
     </section>
 
     <section class="step">
-      <div class="step-head"><span class="step-num">05</span><h2 class="step-title" data-t="s5"></h2></div>
-      <p class="note" id="lockNote" data-t="lockNote"></p>
-      <button class="build" id="build" data-t="buildBtn"></button>
+      <div class="step-head"><span class="step-num">05</span><h2 class="step-title" data-t="s5">Bauen</h2></div>
+      <p class="note" id="lockNote" data-t="lockNote"><b>Die Sperre lässt sich nur mit einer App ein- und ausschalten, die das unterstützt.</b> Ohne eine solche App bleibt der Roller gesperrt, auch mit dieser Firmware.</p>
+      <button class="build" id="build" data-t="buildBtn">Firmware bauen</button>
       <div id="out" aria-live="polite"></div>
     </section>
   </div>
 
   <footer>
     <span class="foot-links">
-      <a href="https://github.com/Laufbursche42/tr-fw" target="_blank" rel="noopener" data-t="source"></a>
-      <a id="readmeLink" href="README.md" data-doc="README" data-t="readme"></a>
-      <a id="changelogLink" href="CHANGELOG.de.md" data-doc="CHANGELOG" data-t="changelog"></a>
-      <a href="#" id="disclaimerLink" data-t="disclaimer"></a>
-      <a id="privacyLink" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="privacy"></a>
-      <a id="licenseLink" href="LICENSE.de.md" data-doc="LICENSE" data-t="license"></a>
-      <a id="trademarksLink" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="trademarks"></a>
+      <a href="https://github.com/Laufbursche42/tr-fw" target="_blank" rel="noopener" data-t="source">Quellcode</a>
+      <a id="readmeLink" href="README.md" data-doc="README" data-t="readme">Readme</a>
+      <a id="changelogLink" href="CHANGELOG.de.md" data-doc="CHANGELOG" data-t="changelog">Changelog für Firmware</a>
+      <a href="#" id="disclaimerLink" data-t="disclaimer">Haftungsausschluss</a>
+      <a id="privacyLink" href="PRIVACY.de.md" data-doc="PRIVACY" data-t="privacy">Datenschutz</a>
+      <a id="licenseLink" href="LICENSE.de.md" data-doc="LICENSE" data-t="license">Lizenz</a>
+      <a id="trademarksLink" href="TRADEMARKS.de.md" data-doc="TRADEMARKS" data-t="trademarks">Marken</a>
     </span>
-    <span class="build-id"><span data-t="buildLabel"></span> <span id="pageBuild"></span></span>
+    <span class="build-id"><span data-t="buildLabel">Build</span> <span id="pageBuild"></span></span>
     <a class="foot-copy" href="https://laufbursche42.github.io/Laufbursche42/" target="_blank" rel="noopener">Copyright (c) 2026 Laufbursche</a>
   </footer>
 </div>
@@ -131,17 +131,17 @@
   <!-- autofocus here, otherwise the browser focuses the buttons at the bottom and
        the scrolling dialog opens somewhere in the middle of the text. -->
   <div class="dlg-body" tabindex="-1" autofocus>
-    <h2 data-t="dlgTitle"></h2>
-    <p class="dlg-lede" data-t="dlgLede"></p>
+    <h2 data-t="dlgTitle">Bitte einmal lesen</h2>
+    <p class="dlg-lede" data-t="dlgLede">Bevor du baust, bitte diese Punkte lesen.</p>
     <ul id="dlgList"></ul>
     <label class="consent-row" for="dlgConsent">
       <input type="checkbox" id="dlgConsent">
-      <span data-t="dlgConsent"></span>
+      <span data-t="dlgConsent">Ich habe den Haftungsausschluss gelesen und baue auf eigene Gefahr.</span>
     </label>
   </div>
   <div class="dlg-foot">
-    <button type="button" class="btn-cancel" id="dlgNo" data-t="dlgNo"></button>
-    <button type="button" class="btn-go" id="dlgYes" disabled data-t="dlgYes"></button>
+    <button type="button" class="btn-cancel" id="dlgNo" data-t="dlgNo">Abbrechen</button>
+    <button type="button" class="btn-go" id="dlgYes" disabled data-t="dlgYes">Verstanden und bauen</button>
   </div>
 </dialog>
 
@@ -152,18 +152,18 @@
   </div>
   <div class="doc-body" id="docBody"></div>
   <div class="doc-foot">
-    <button type="button" class="btn-cancel" id="docClose" data-t="docClose"></button>
+    <button type="button" class="btn-cancel" id="docClose" data-t="docClose">Schließen</button>
   </div>
 </dialog>
 
 <dialog id="ee" aria-labelledby="eeTitle">
   <div class="doc-head">
-    <h2 id="eeTitle" data-t="eeTitle"></h2>
+    <h2 id="eeTitle" data-t="eeTitle">EEPROM prüfen</h2>
     <button type="button" id="eeX">&times;</button>
   </div>
   <div class="doc-body">
     <p class="ee-status" id="eeStatus" aria-live="polite"></p>
-    <p class="ee-read" data-t="eeReadOnly"></p>
+    <p class="ee-read" data-t="eeReadOnly">Der Roller muss eingeschaltet und in Reichweite sein. Im Auswahlfenster steht er unter seinem Bluetooth-Namen, der mit TDE oder T1 beginnt. Getestet ist das mit dem Fighter Mini mit IVCU-Steuerung, bei anderen Modellen können Adressen und Werte abweichen. Gedacht ist das vor allem für 'EEPROM zurücksetzen': einmal vor dem Reset ablesen, einmal danach, zum Vergleich.</p>
     <!-- Three sections, all built by the script: labels, live values and the factory
          column all follow the language; only the script knows which gears were
          reported and which identity frames arrived. First the scooter's own identity,
@@ -178,8 +178,8 @@
     <p class="hint" id="eeCopied" aria-live="polite"></p>
   </div>
   <div class="doc-foot">
-    <button type="button" class="btn-go" id="eeCopy" data-t="eeCopy"></button>
-    <button type="button" class="btn-cancel" id="eeClose" data-t="docClose"></button>
+    <button type="button" class="btn-go" id="eeCopy" data-t="eeCopy">In die Zwischenablage</button>
+    <button type="button" class="btn-cancel" id="eeClose" data-t="docClose">Schließen</button>
   </div>
 </dialog>
 
